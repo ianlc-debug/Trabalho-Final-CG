@@ -1,0 +1,44 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://d5hj6g6d4bah"
+path.s3tc="res://.godot/imported/CastleModel_Concrete036_1K_Color_Mat_MetallicRoughness.png-e40e8260f2410a4bb23c0afbb545ae63.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "4330a3490ea8f2db20c05f39493e1424"
+}
+
+[deps]
+
+source_file="res://assets/Castle/CastleModel_Concrete036_1K_Color_Mat_MetallicRoughness.png"
+dest_files=["res://.godot/imported/CastleModel_Concrete036_1K_Color_Mat_MetallicRoughness.png-e40e8260f2410a4bb23c0afbb545ae63.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

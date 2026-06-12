@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://dckyvixvqaipk"]
 
 [ext_resource type="MeshLibrary" uid="uid://cbcck2aox3ltk" path="res://Resources/Primavera.meshlib" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_0xm2m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
+size = Vector3(151.79004, 91.0758, 115.98511)
 
 [node name="Main" type="Node3D" unique_id=1137313691]
 
@@ -17,4 +21,14 @@ data = {
 
 [node name="Base" type="Node3D" parent="." unique_id=941563569]
 
+[node name="Castle" parent="Base" unique_id=1743682002 instance=ExtResource("2_0xm2m")]
+transform = Transform3D(-0.0045198253, 0, -0.0637254, 0, 0.06388549, 0, 0.0637254, 0, -0.0045198253, 19.653742, 0.70701385, 5.2429495)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Base/Castle" unique_id=751290002]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Base/Castle/StaticBody3D" unique_id=1095285105]
+transform = Transform3D(1, 0, -2.2351742e-08, 0, 1.000001, 0, 2.2351742e-08, 0, 1, 9.518997, 45.24909, -12.139404)
+shape = SubResource("BoxShape3D_h2yge")
+
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1657173843]
+transform = Transform3D(1, 0, 0, 0, 0.5648806, 0.82517266, 0, -0.82517266, 0.5648806, 3.9438038, 19.984283, 11.145288)
