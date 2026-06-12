@@ -32,3 +32,14 @@ shape = SubResource("BoxShape3D_h2yge")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1657173843]
 transform = Transform3D(1, 0, 0, 0, 0.5648806, 0.82517266, 0, -0.82517266, 0.5648806, 3.9438038, 19.984283, 11.145288)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=740686446]
+transform = Transform3D(0.95564914, -0.093507, 0.27926868, -0.20541975, 0.4678664, 0.85959494, -0.2110386, -0.8788386, 0.4279079, -1.0266056, 16.802223, 8.302513)
+light_energy = 3.247
+light_indirect_energy = 3.343
+light_volumetric_fog_energy = 3.505
+light_angular_distance = 8.0
+shadow_enabled = true
+shadow_normal_bias = 0.0
+shadow_transmittance_bias = -0.919
+shadow_opacity = 0.62
