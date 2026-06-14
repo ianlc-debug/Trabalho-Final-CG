@@ -1,39 +1,9 @@
 [gd_scene format=3 uid="uid://bmf8jtwnr0q8h"]
 
+[ext_resource type="Script" uid="uid://c8x08bumvd7h3" path="res://scripts/mapa_primavera.gd" id="1_alwm1"]
 [ext_resource type="MeshLibrary" uid="uid://cbcck2aox3ltk" path="res://Resources/Primavera.meshlib" id="1_qswpk"]
 [ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_alwm1"]
-
-[sub_resource type="GDScript" id="GDScript_qswpk"]
-script/source = "extends Node3D
-
-\"res://Scenes/inimigo_basico.tscn\"
-@export var inimigo_scene: PackedScene 
-@export var spawn_interval: float = 2.0
-
-func _ready():
-	var timer = Timer.new()
-	timer.wait_time = spawn_interval
-	timer.autostart = true
-	timer.timeout.connect(_spawn_inimigo)
-	add_child(timer)
-
-func _spawn_inimigo():
-	# Verifica se a cena foi atribuída antes de tentar instanciar
-	if not inimigo_scene:
-		print(\"Erro: A cena do inimigo não foi definida no Inspetor!\")
-		return
-
-	var novo_inimigo = inimigo_scene.instantiate()
-	
-	# Cria o PathFollow3D
-	var path_follow = PathFollow3D.new()
-	
-	# Adiciona ao Path3D que está na cena
-	$Path3D.add_child(path_follow)
-	
-	# Adiciona o inimigo ao PathFollow3D
-	path_follow.add_child(novo_inimigo)
-"
+[ext_resource type="PackedScene" uid="uid://2bq8y0yu8ip1" path="res://Scenes/inimigo_basico.tscn" id="2_ctoxc"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
 size = Vector3(151.79004, 91.0758, 115.98511)
@@ -46,7 +16,8 @@ _data = {
 point_count = 12
 
 [node name="Map" type="Node3D" unique_id=1143051120]
-script = SubResource("GDScript_qswpk")
+script = ExtResource("1_alwm1")
+cena_inimigo = ExtResource("2_ctoxc")
 
 [node name="GridMapPrimavera" type="GridMap" parent="." unique_id=1788637306]
 mesh_library = ExtResource("1_qswpk")
@@ -88,5 +59,3 @@ curve = SubResource("Curve3D_qswpk")
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -15.4468565, 0, -3.5160255)
 
 [node name="SpawnTimer" type="Timer" parent="." unique_id=772010765]
-wait_time = 2.0
-autostart = true

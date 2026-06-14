@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://2bq8y0yu8ip1"]
 
 [ext_resource type="PackedScene" uid="uid://bifkxw5hpf1dp" path="res://assets/enemy-ufo-c.glb" id="1_bodl0"]
+[ext_resource type="Script" uid="uid://bk6ncqrjxuel2" path="res://scripts/inimigo_basico.gd" id="1_farlq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
 size = Vector3(1, 0.63792324, 1.0196533)
 
 [node name="InimigoBásico" type="Node3D" unique_id=1121911367]
+script = ExtResource("1_farlq")
 
 [node name="enemy-ufo-c2" parent="." unique_id=703985600 instance=ExtResource("1_bodl0")]
 
