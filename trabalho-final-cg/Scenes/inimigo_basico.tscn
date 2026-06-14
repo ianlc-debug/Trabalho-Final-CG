@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://2bq8y0yu8ip1"]
+
+[ext_resource type="PackedScene" uid="uid://bifkxw5hpf1dp" path="res://assets/enemy-ufo-c.glb" id="1_bodl0"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
+size = Vector3(1, 0.63792324, 1.0196533)
+
+[node name="InimigoBásico" type="Node3D" unique_id=1121911367]
+
+[node name="enemy-ufo-c2" parent="." unique_id=703985600 instance=ExtResource("1_bodl0")]
+
+[node name="Area3D" type="Area3D" parent="enemy-ufo-c2" unique_id=1348285156]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-c2/Area3D" unique_id=158798814]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2710452, 0)
+shape = SubResource("BoxShape3D_iw5ln")
