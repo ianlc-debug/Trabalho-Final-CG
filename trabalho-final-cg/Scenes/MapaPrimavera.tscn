@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_alwm1"]
 [ext_resource type="PackedScene" uid="uid://2bq8y0yu8ip1" path="res://Scenes/inimigo_basico.tscn" id="2_ctoxc"]
 [ext_resource type="Texture2D" uid="uid://dnwe442illoox" path="res://Resources/cannon01a.png" id="5_5t030"]
+[ext_resource type="Script" uid="uid://bbw7pdnojs4u5" path="res://scripts/gerenciador_ui.gd" id="5_unaey"]
+[ext_resource type="PackedScene" uid="uid://epjm2kpwtoer" path="res://Scenes/cena_canhao.tscn" id="6_unaey"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
 size = Vector3(151.79004, 91.0758, 115.98511)
@@ -22,6 +24,9 @@ _data = {
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0)
 }
 point_count = 8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_unaey"]
+size = Vector3(40.589905, 1.1893921, 24.51941)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
 script = ExtResource("1_alwm1")
@@ -64,7 +69,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3705149, 0)
 curve = SubResource("Curve3D_qswpk")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1990182895]
-transform = Transform3D(-0.011490123, 0, -0.9999225, 0, 1, 0, 0.9999225, 0, -0.011490123, -15.4468565, 0, -3.5160255)
+transform = Transform3D(-0.01149012, 0, -0.9999222, 0, 1, 0, 0.9999222, 0, -0.01149012, -15.4468565, 0, -3.5160255)
 
 [node name="Path3D2" type="Path3D" parent="." unique_id=1591000590]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8056288, 0)
@@ -73,17 +78,27 @@ curve = SubResource("Curve3D_ctoxc")
 [node name="SpawnTimer" type="Timer" parent="." unique_id=772010765]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1474030420]
+script = ExtResource("5_unaey")
+cena_canhao = ExtResource("6_unaey")
 
-[node name="Button" type="Button" parent="UI" unique_id=1848655366]
+[node name="HBoxContainer" type="HBoxContainer" parent="UI" unique_id=245204146]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -44.0
-offset_top = -109.0
-offset_right = 60.0
-offset_bottom = -5.0
+offset_left = -52.0
+offset_top = -104.0
+offset_right = 52.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="BotaoCanhao" type="Button" parent="UI/HBoxContainer" unique_id=1848655366]
+layout_mode = 2
 icon = ExtResource("5_5t030")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1513636654]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=980139370]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8718567, 0.094696045, -1.6921997)
+shape = SubResource("BoxShape3D_unaey")

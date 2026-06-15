@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://epjm2kpwtoer"]
+
+[ext_resource type="PackedScene" uid="uid://d2q6k8okigbdf" path="res://assets/weapon-cannon.glb" id="1_qb48x"]
+
+[node name="CenaCanhao" type="Node3D" unique_id=914239818]
+
+[node name="weapon-cannon2" parent="." unique_id=2136069171 instance=ExtResource("1_qb48x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026426673, 0, -0.011068821)
