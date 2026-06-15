@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dxib752ddt66d"]
+
+[ext_resource type="PackedScene" uid="uid://csk0fj1oir5ug" path="res://assets/Mine/stylized_gold_mine.glb" id="1_f7n4j"]
+
+[node name="MinaOuro" type="Node3D" unique_id=117611019]
+
+[node name="Sketchfab_Scene" parent="." unique_id=795514459 instance=ExtResource("1_f7n4j")]
+transform = Transform3D(0.089, 0, 0, 0, 0.089, 0, 0, 0, 0.089, 0, 0, 0)

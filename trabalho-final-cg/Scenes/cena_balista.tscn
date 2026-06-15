@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dhijxvdpqd6sb"]
+
+[ext_resource type="PackedScene" uid="uid://dygshcvn8j02n" path="res://assets/weapon-ballista.glb" id="1_j7np6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j7np6"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.54509807)
+
+[sub_resource type="SphereMesh" id="SphereMesh_gyh7n"]
+material = SubResource("StandardMaterial3D_j7np6")
+radius = 2.0
+height = 4.0
+
+[node name="cena_balista" type="Node3D" unique_id=1889786373]
+
+[node name="weapon-ballista2" parent="." unique_id=21449301 instance=ExtResource("1_j7np6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.045, 0, 0)
+
+[node name="Alcance" type="MeshInstance3D" parent="." unique_id=1039990116]
+visible = false
+cast_shadow = 0
+mesh = SubResource("SphereMesh_gyh7n")

@@ -2,7 +2,21 @@
 
 [ext_resource type="PackedScene" uid="uid://d2q6k8okigbdf" path="res://assets/weapon-cannon.glb" id="1_qb48x"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qb48x"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.54509807)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7ap4x"]
+material = SubResource("StandardMaterial3D_qb48x")
+radius = 2.0
+height = 4.0
+
 [node name="CenaCanhao" type="Node3D" unique_id=914239818]
 
 [node name="weapon-cannon2" parent="." unique_id=2136069171 instance=ExtResource("1_qb48x")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026426673, 0, -0.011068821)
+
+[node name="Alcance" type="MeshInstance3D" parent="." unique_id=629548289]
+visible = false
+cast_shadow = 0
+mesh = SubResource("SphereMesh_7ap4x")

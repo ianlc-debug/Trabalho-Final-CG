@@ -1,37 +1,55 @@
 extends CanvasLayer
 
+# --- Variáveis para as Construções ---
 @export var cena_canhao: PackedScene 
+@export var cena_balista: PackedScene 
+@export var cena_catapulta: PackedScene 
+@export var cena_mina: PackedScene 
 
-# --- Referências Corrigidas ---
-@onready var mapa_3d = get_parent() # Pega o nó 'Map'
-@onready var camera = $"../GridMapPrimavera/Camera3D2" # Caminho exato para a câmera!
+@onready var mapa_3d = get_parent() 
+@onready var camera = $"../GridMapPrimavera/Camera3D2" 
+
+# --- Referências dos Botões ---
 @onready var botao_canhao = $HBoxContainer/BotaoCanhao
+@onready var botao_balista = $HBoxContainer/BotaoBalista
+@onready var botao_catapulta = $HBoxContainer/BotaoCatapulta
+@onready var botao_mina = $HBoxContainer/BotaoMina 
 
 var arrastando = false
 var torre_fantasma: Node3D = null
 
 func _ready():
-	# Verificação de segurança automática
-	if not camera:
-		print("ERRO: A UI não conseguiu encontrar a Camera3D2 no GridMapPrimavera!")
-		
-	botao_canhao.button_down.connect(_iniciar_arraste)
+	# Conexões dos botões
+	botao_canhao.button_down.connect(_iniciar_arraste.bind(cena_canhao))
+	botao_balista.button_down.connect(_iniciar_arraste.bind(cena_balista))
+	botao_catapulta.button_down.connect(_iniciar_arraste.bind(cena_catapulta))
+	botao_mina.button_down.connect(_iniciar_arraste.bind(cena_mina)) 
+	
 	botao_canhao.button_up.connect(_soltar_torre)
+	botao_balista.button_up.connect(_soltar_torre)
+	botao_catapulta.button_up.connect(_soltar_torre)
+	botao_mina.button_up.connect(_soltar_torre) 
 
-func _iniciar_arraste():
-	if not cena_canhao:
-		print("ERRO: Você esqueceu de arrastar a cena do canhão para o Inspetor da UI!")
+func _iniciar_arraste(cena_escolhida: PackedScene):
+	if not cena_escolhida:
+		print("ERRO: A cena desta construção não foi arrastada no Inspetor da UI!")
 		return
 		
 	arrastando = true
-	torre_fantasma = cena_canhao.instantiate()
+	torre_fantasma = cena_escolhida.instantiate()
 	mapa_3d.add_child(torre_fantasma)
-	print("Arraste iniciado!")
+	
+	# NOVO: Se a torre tiver o nó "Alcance", nós mostramos a bolha!
+	if torre_fantasma.has_node("Alcance"):
+		torre_fantasma.get_node("Alcance").visible = true
 
 func _soltar_torre():
 	arrastando = false
 	if torre_fantasma:
-		print("Canhão posicionado na coordenada: ", torre_fantasma.position)
+		# NOVO: Esconde a bolha de alcance antes de fixar a torre no mapa
+		if torre_fantasma.has_node("Alcance"):
+			torre_fantasma.get_node("Alcance").visible = false
+			
 		torre_fantasma = null 
 
 func _process(_delta):

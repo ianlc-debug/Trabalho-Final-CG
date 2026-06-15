@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dwouk4e0i6upw"]
+
+[ext_resource type="PackedScene" uid="uid://btqpvuqi1srn" path="res://assets/weapon-catapult.glb" id="1_tf15a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tf15a"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.54509807)
+
+[sub_resource type="SphereMesh" id="SphereMesh_7jgqg"]
+material = SubResource("StandardMaterial3D_tf15a")
+radius = 2.0
+height = 4.0
+
+[node name="cena_catapulta" type="Node3D" unique_id=475903651]
+
+[node name="weapon-catapult2" parent="." unique_id=1056956060 instance=ExtResource("1_tf15a")]
+
+[node name="Alcance" type="MeshInstance3D" parent="." unique_id=327804743]
+visible = false
+cast_shadow = 0
+mesh = SubResource("SphereMesh_7jgqg")
