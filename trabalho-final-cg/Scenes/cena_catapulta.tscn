@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dwouk4e0i6upw"]
 
+[ext_resource type="Script" uid="uid://dc4csu4mrsmha" path="res://scripts/torre_atatque.gd" id="1_7jgqg"]
 [ext_resource type="PackedScene" uid="uid://btqpvuqi1srn" path="res://assets/weapon-catapult.glb" id="1_tf15a"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tf15a"]
@@ -12,6 +13,10 @@ radius = 2.0
 height = 4.0
 
 [node name="cena_catapulta" type="Node3D" unique_id=475903651]
+script = ExtResource("1_7jgqg")
+dano = 32
+alcance = 10.0
+intervalo_ataque = 1.5
 
 [node name="weapon-catapult2" parent="." unique_id=1056956060 instance=ExtResource("1_tf15a")]
 
