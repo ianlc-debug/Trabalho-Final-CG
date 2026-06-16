@@ -132,7 +132,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3705149, 0)
 curve = SubResource("Curve3D_qswpk")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1990182895]
-transform = Transform3D(-0.011490091, 0, -0.99991965, 0, 1, 0, 0.99991965, 0, -0.011490091, -15.4468565, 0, -3.5160255)
+transform = Transform3D(-0.011490085, 0, -0.9999192, 0, 1, 0, 0.9999192, 0, -0.011490085, -15.4468565, 0, -3.5160255)
 
 [node name="Path3D2" type="Path3D" parent="." unique_id=1591000590]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8056288, 0)

@@ -5,9 +5,17 @@ extends Node3D
 
 var vida_atual: int
 
+# --- NOVO: Pega a referência da barra de progresso na árvore ---
+@onready var barra_vida: ProgressBar = $BarraVida3D/SubViewport/ProgressBar
+
 func _ready():
 	vida_atual = vida_maxima
 	add_to_group("inimigos")
+	
+	# --- NOVO: Configura os valores iniciais da barra de vida ---
+	if barra_vida:
+		barra_vida.max_value = vida_maxima
+		barra_vida.value = vida_atual
 
 func _process(delta):
 	var seguidor = get_parent()
@@ -22,6 +30,10 @@ func _process(delta):
 func tomar_dano(dano: int):
 	vida_atual -= dano
 	print("Inimigo tomou dano:", dano, " Vida restante:", vida_atual)
+	
+	# --- NOVO: Atualiza o visual da barra com a vida restante ---
+	if barra_vida:
+		barra_vida.value = vida_atual
 	
 	if vida_atual <= 0:
 		morrer()

@@ -6,6 +6,15 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
 size = Vector3(1, 0.63792324, 1.0196533)
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_farlq"]
+viewport_path = NodePath("BarraVida3D/SubViewport")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fyd03"]
+bg_color = Color(0.88235295, 0.08627451, 0.13333334, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_msvyc"]
+bg_color = Color(0, 0.5647059, 0.16078432, 1)
+
 [node name="InimigoBásico" type="Node3D" unique_id=1121911367]
 script = ExtResource("1_farlq")
 
@@ -16,3 +25,19 @@ script = ExtResource("1_farlq")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-c2/Area3D" unique_id=158798814]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2710452, 0)
 shape = SubResource("BoxShape3D_iw5ln")
+
+[node name="BarraVida3D" type="Sprite3D" parent="." unique_id=1330620750]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7001953, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_farlq")
+
+[node name="SubViewport" type="SubViewport" parent="BarraVida3D" unique_id=2144106976]
+transparent_bg = true
+size = Vector2i(150, 20)
+
+[node name="ProgressBar" type="ProgressBar" parent="BarraVida3D/SubViewport" unique_id=80130307]
+offset_right = 150.0
+offset_bottom = 27.0
+theme_override_styles/background = SubResource("StyleBoxFlat_fyd03")
+theme_override_styles/fill = SubResource("StyleBoxFlat_msvyc")
+show_percentage = false
