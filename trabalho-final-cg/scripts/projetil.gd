@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var velocidade: float = 30.0
+@export var velocidade: float = 20.0
 
 var _dano: int = 0
 var _alvo: Node3D = null

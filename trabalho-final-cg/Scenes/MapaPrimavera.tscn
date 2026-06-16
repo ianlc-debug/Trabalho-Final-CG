@@ -34,6 +34,63 @@ point_count = 8
 [sub_resource type="BoxShape3D" id="BoxShape3D_unaey"]
 size = Vector3(39.975716, 1.1893921, 23.952087)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_84pnl"]
+size = Vector3(7.7803955, 0.5038452, 0.81225586)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qmadh"]
+size = Vector3(0.81422424, 0.5038452, 8.143509)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y668q"]
+size = Vector3(4.2428913, 0.5038452, 0.6857796)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l6i2k"]
+size = Vector3(0.7286916, 0.5038452, 4.3718553)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tqrot"]
+size = Vector3(9.061811, 0.5038452, 0.85694814)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5f188"]
+size = Vector3(0.7690649, 0.5038452, 5.732185)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_68o3b"]
+size = Vector3(7.7581234, 0.5038452, 0.7078893)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1kt0t"]
+size = Vector3(0.74527264, 0.5038452, 5.649721)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xitbt"]
+size = Vector3(6.7458053, 0.5038452, 0.7062082)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_yrx38"]
+size = Vector3(0.7841686, 0.5038452, 5.6870885)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4bcjq"]
+size = Vector3(6.7065372, 0.5038452, 0.74491143)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lld0d"]
+size = Vector3(0.7708726, 0.5038452, 5.76655)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u2qos"]
+size = Vector3(11.783295, 0.5038452, 0.78281116)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qki3w"]
+size = Vector3(0.80033875, 0.5038452, 4.7719235)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_06e1w"]
+size = Vector3(9.781029, 0.5038452, 0.78000474)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_s3m3a"]
+size = Vector3(0.7591667, 0.5038452, 8.796252)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kecp1"]
+size = Vector3(8.775579, 0.5038452, 0.75896597)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0nuux"]
+size = Vector3(0.7862272, 0.5038452, 4.7182283)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tsuef"]
+size = Vector3(7.373071, 32.89145, 7.5959997)
+
 [node name="Map" type="Node3D" unique_id=1143051120]
 script = ExtResource("1_alwm1")
 cena_inimigo = ExtResource("2_ctoxc")
@@ -75,7 +132,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3705149, 0)
 curve = SubResource("Curve3D_qswpk")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1990182895]
-transform = Transform3D(-0.011490095, 0, -0.99992007, 0, 1, 0, 0.99992007, 0, -0.011490095, -15.4468565, 0, -3.5160255)
+transform = Transform3D(-0.011490091, 0, -0.99991965, 0, 1, 0, 0.99991965, 0, -0.011490091, -15.4468565, 0, -3.5160255)
 
 [node name="Path3D2" type="Path3D" parent="." unique_id=1591000590]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8056288, 0)
@@ -123,3 +180,81 @@ icon = ExtResource("12_23i5f")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=980139370]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0020638, 0.094696045, -1.9758606)
 shape = SubResource("BoxShape3D_unaey")
+
+[node name="BloqueioEstrada" type="Area3D" parent="." unique_id=435397462 groups=["area_proibida"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1781031461]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.010291, 0.45518267, -3.496193)
+shape = SubResource("BoxShape3D_84pnl")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=517457265]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5154295, 0.45518267, 0.83359194)
+shape = SubResource("BoxShape3D_qmadh")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1962696919]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.744242, 0.45518267, 4.519701)
+shape = SubResource("BoxShape3D_y668q")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1661196144]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.501692, 0.45518267, 6.7483234)
+shape = SubResource("BoxShape3D_l6i2k")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=2144012186]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.486843, 0.45518267, 8.505777)
+shape = SubResource("BoxShape3D_tqrot")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=928034125]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4921813, 0.45518267, 6.068159)
+shape = SubResource("BoxShape3D_5f188")
+
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1875775615]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.002348, 0.45518267, 3.5560112)
+shape = SubResource("BoxShape3D_68o3b")
+
+[node name="CollisionShape3D8" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1839781781]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5087733, 0.45518267, 6.026927)
+shape = SubResource("BoxShape3D_1kt0t")
+
+[node name="CollisionShape3D9" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1743639392]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.50904, 0.45518267, 8.498684)
+shape = SubResource("BoxShape3D_xitbt")
+
+[node name="CollisionShape3D10" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=969259892]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.489858, 0.45518267, 6.0082436)
+shape = SubResource("BoxShape3D_yrx38")
+
+[node name="CollisionShape3D11" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1074880101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.451042, 0.45518267, 3.5371552)
+shape = SubResource("BoxShape3D_4bcjq")
+
+[node name="CollisionShape3D12" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=729388985]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.503417, 0.45518267, -9.986924)
+shape = SubResource("BoxShape3D_lld0d")
+
+[node name="CollisionShape3D13" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=806822709]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.99720573, 0.45518267, -7.4950547)
+shape = SubResource("BoxShape3D_u2qos")
+
+[node name="CollisionShape3D14" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=191785002]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.494272, 0.45518267, -9.489611)
+shape = SubResource("BoxShape3D_qki3w")
+
+[node name="CollisionShape3D15" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=577377342]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.984617, 0.45518267, -11.48557)
+shape = SubResource("BoxShape3D_06e1w")
+
+[node name="CollisionShape3D16" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=946733702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.495548, 0.45518267, -7.477446)
+shape = SubResource("BoxShape3D_s3m3a")
+
+[node name="CollisionShape3D17" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1483570403]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.503754, 0.45518267, -3.4588027)
+shape = SubResource("BoxShape3D_kecp1")
+
+[node name="CollisionShape3D18" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1104968060]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.49843, 0.45518267, -1.4791716)
+shape = SubResource("BoxShape3D_0nuux")
+
+[node name="CollisionShape3D19" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=667282340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.258255, 16.966087, 5.336677)
+shape = SubResource("BoxShape3D_tsuef")
