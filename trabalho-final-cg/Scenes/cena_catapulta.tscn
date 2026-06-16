@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dc4csu4mrsmha" path="res://scripts/torre_atatque.gd" id="1_7jgqg"]
 [ext_resource type="PackedScene" uid="uid://btqpvuqi1srn" path="res://assets/weapon-catapult.glb" id="1_tf15a"]
+[ext_resource type="PackedScene" uid="uid://cluovq0ny4hou" path="res://Scenes/projetil_catapulta.tscn" id="2_rrur4"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tf15a"]
 transparency = 1
@@ -14,11 +15,13 @@ height = 4.0
 
 [node name="cena_catapulta" type="Node3D" unique_id=475903651]
 script = ExtResource("1_7jgqg")
+cena_projetil = ExtResource("2_rrur4")
 dano = 32
 alcance = 10.0
 intervalo_ataque = 1.5
 
 [node name="weapon-catapult2" parent="." unique_id=1056956060 instance=ExtResource("1_tf15a")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="Alcance" type="MeshInstance3D" parent="." unique_id=327804743]
 visible = false

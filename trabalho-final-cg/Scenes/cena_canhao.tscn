@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dc4csu4mrsmha" path="res://scripts/torre_atatque.gd" id="1_7ap4x"]
 [ext_resource type="PackedScene" uid="uid://d2q6k8okigbdf" path="res://assets/weapon-cannon.glb" id="1_qb48x"]
+[ext_resource type="PackedScene" uid="uid://dy4l0j8i53jdw" path="res://Scenes/projetil_canhao.tscn" id="2_3jln8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qb48x"]
 transparency = 1
@@ -14,10 +15,11 @@ height = 4.0
 
 [node name="CenaCanhao" type="Node3D" unique_id=914239818]
 script = ExtResource("1_7ap4x")
+cena_projetil = ExtResource("2_3jln8")
 dano = 28
 
 [node name="weapon-cannon2" parent="." unique_id=2136069171 instance=ExtResource("1_qb48x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.026426673, 0, -0.011068821)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.026426673, 0, -0.011068821)
 
 [node name="Alcance" type="MeshInstance3D" parent="." unique_id=629548289]
 visible = false

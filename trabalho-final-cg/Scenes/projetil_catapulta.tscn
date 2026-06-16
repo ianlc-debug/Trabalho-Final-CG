@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cluovq0ny4hou"]
+
+[ext_resource type="Script" uid="uid://bg8c5ik5q286g" path="res://scripts/projetil.gd" id="1_got3h"]
+[ext_resource type="PackedScene" uid="uid://ct0p4dc0w1r8u" path="res://assets/weapon-ammo-boulder.glb" id="1_o50jx"]
+
+[node name="projetil_catapulta" type="Node3D" unique_id=1490101976]
+script = ExtResource("1_got3h")
+
+[node name="weapon-ammo-boulder2" parent="." unique_id=961803018 instance=ExtResource("1_o50jx")]

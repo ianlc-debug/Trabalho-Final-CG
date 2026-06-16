@@ -133,6 +133,10 @@ func _soltar_torre() -> void:
 	if torre_fantasma.has_method("configurar_gerenciador_ouro"):
 		torre_fantasma.configurar_gerenciador_ouro(self)
 	
+	# Ativa a torre de ataque caso ela possua essa função (evita que atire enquanto fantasma)
+	if torre_fantasma.has_method("ativar_torre"):
+		torre_fantasma.ativar_torre()
+	
 	_mostrar_mensagem(nome_construcao_atual + " colocado. Ouro restante: " + str(ouro))
 	
 	torre_fantasma = null

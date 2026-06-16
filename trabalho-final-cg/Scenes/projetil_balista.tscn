@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://ccxj02pwntwu7"]
+
+[ext_resource type="Script" uid="uid://bg8c5ik5q286g" path="res://scripts/projetil.gd" id="1_4u38o"]
+[ext_resource type="PackedScene" uid="uid://l66p6jej2evh" path="res://assets/weapon-ammo-arrow.glb" id="1_wnk5k"]
+
+[node name="projetil_balista" type="Node3D" unique_id=1910398470]
+script = ExtResource("1_4u38o")
+
+[node name="weapon-ammo-arrow2" parent="." unique_id=1961698871 instance=ExtResource("1_wnk5k")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)

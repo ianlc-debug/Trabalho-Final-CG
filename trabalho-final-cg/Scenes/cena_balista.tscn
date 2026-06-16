@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dc4csu4mrsmha" path="res://scripts/torre_atatque.gd" id="1_gyh7n"]
 [ext_resource type="PackedScene" uid="uid://dygshcvn8j02n" path="res://assets/weapon-ballista.glb" id="1_j7np6"]
+[ext_resource type="PackedScene" uid="uid://ccxj02pwntwu7" path="res://Scenes/projetil_balista.tscn" id="2_nm8tc"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j7np6"]
 transparency = 1
@@ -14,12 +15,13 @@ height = 4.0
 
 [node name="cena_balista" type="Node3D" unique_id=1889786373]
 script = ExtResource("1_gyh7n")
+cena_projetil = ExtResource("2_nm8tc")
 dano = 15
 alcance = 12.0
 intervalo_ataque = 0.8
 
 [node name="weapon-ballista2" parent="." unique_id=21449301 instance=ExtResource("1_j7np6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.045, 0, 0)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.045, 0, 0)
 
 [node name="Alcance" type="MeshInstance3D" parent="." unique_id=1039990116]
 visible = false

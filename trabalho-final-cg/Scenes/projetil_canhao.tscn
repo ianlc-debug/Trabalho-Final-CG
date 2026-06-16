@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dy4l0j8i53jdw"]
+
+[ext_resource type="PackedScene" uid="uid://8pkvj7fhearw" path="res://assets/weapon-ammo-cannonball.glb" id="1_0nnug"]
+[ext_resource type="Script" uid="uid://bg8c5ik5q286g" path="res://scripts/projetil.gd" id="1_s7scn"]
+
+[node name="ProjetilCanhao" type="Node3D" unique_id=1546514146]
+script = ExtResource("1_s7scn")
+
+[node name="weapon-ammo-cannonball2" parent="." unique_id=1440454650 instance=ExtResource("1_0nnug")]
