@@ -14,3 +14,16 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# OS-specific ignores
+.DS_Store
+Thumbs.db
+
+# IDE/Editor config ignores
+.vscode/
+.idea/
+*.user
+
+# Agent tooling ignores
+**/addons/godot_ai/
+
