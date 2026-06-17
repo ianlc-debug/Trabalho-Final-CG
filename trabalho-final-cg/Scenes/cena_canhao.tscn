@@ -13,6 +13,10 @@ material = SubResource("StandardMaterial3D_qb48x")
 radius = 2.0
 height = 4.0
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_canhao"]
+height = 1.6
+radius = 0.7
+
 [node name="CenaCanhao" type="Node3D" unique_id=914239818]
 script = ExtResource("1_7ap4x")
 cena_projetil = ExtResource("2_3jln8")
@@ -25,3 +29,10 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.0
 visible = false
 cast_shadow = 0
 mesh = SubResource("SphereMesh_7ap4x")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CylinderShape3D_canhao")
+

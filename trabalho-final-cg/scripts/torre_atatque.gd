@@ -13,6 +13,12 @@ var esta_ativa: bool = false
 
 var inimigos_rastreados: Array[Node3D] = []
 
+var nivel: int = 1
+var nivel_maximo: int = 3
+
+func _ready() -> void:
+	add_to_group("construcoes")
+
 
 func ativar_torre() -> void:
 	esta_ativa = true
@@ -99,3 +105,66 @@ func _atacar(inimigo: Node3D) -> void:
 	
 	await get_tree().create_timer(intervalo_ataque).timeout
 	pode_atacar = true
+
+
+func obter_custo_upgrade() -> int:
+	if nivel >= nivel_maximo:
+		return 0
+	return int(custo_compra_original() * 1.5 * nivel)
+
+
+func obter_valor_venda() -> int:
+	var total = custo_compra_original()
+	for i in range(1, nivel):
+		total += int(custo_compra_original() * 1.5 * i)
+	return int(total * 0.5)
+
+
+func custo_compra_original() -> int:
+	var nome_l = name.to_lower()
+	if "canhao" in nome_l or "canhão" in nome_l:
+		return 100
+	elif "balista" in nome_l:
+		return 75
+	elif "catapulta" in nome_l:
+		return 150
+	return 100
+
+
+func pode_melhorar() -> bool:
+	return nivel < nivel_maximo
+
+
+func melhorar() -> void:
+	if nivel >= nivel_maximo:
+		return
+	
+	nivel += 1
+	dano = int(dano * 1.4)
+	alcance = alcance * 1.15
+	intervalo_ataque = intervalo_ataque * 0.85
+	
+	# Visual feedforward: scale up slightly
+	scale = Vector3(1.0 + (nivel - 1) * 0.1, 1.0 + (nivel - 1) * 0.1, 1.0 + (nivel - 1) * 0.1)
+	
+	# Apply visual color shift recursivelly
+	var cor_nivel = Color(1.0, 1.0, 1.0)
+	if nivel == 2:
+		cor_nivel = Color(0.8, 0.8, 0.9) # Silver
+	elif nivel == 3:
+		cor_nivel = Color(1.0, 0.84, 0.0) # Gold
+	
+	_aplicar_cor_recursivo(self, cor_nivel)
+
+
+func _aplicar_cor_recursivo(no: Node, cor: Color) -> void:
+	if no is MeshInstance3D:
+		var mat = no.get_active_material(0)
+		if mat:
+			var novo_mat = mat.duplicate()
+			if novo_mat is StandardMaterial3D:
+				novo_mat.albedo_color = novo_mat.albedo_color * cor
+				no.material_override = novo_mat
+	for filho in no.get_children():
+		_aplicar_cor_recursivo(filho, cor)
+
