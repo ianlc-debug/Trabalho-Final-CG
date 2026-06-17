@@ -144,6 +144,9 @@ func _on_spawn_timer_timeout() -> void:
 	if fila_spawn.is_empty():
 		timer.stop()
 		em_spawn = false
+		
+		# --- NOVO: Força a checagem final assim que o spawn termina ---
+		_atualizar_inimigos_vivos() 
 		return
 		
 	var cena_a_spawnar = fila_spawn.pop_front()

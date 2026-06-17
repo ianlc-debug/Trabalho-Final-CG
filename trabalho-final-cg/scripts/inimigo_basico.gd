@@ -93,4 +93,3 @@ func _remover_material_recursivo(no: Node) -> void:
 		no.material_override = null
 	for filho in no.get_children():
 		_remover_material_recursivo(filho)
-

@@ -90,4 +90,3 @@ func _aplicar_cor_recursivo(no: Node, cor: Color) -> void:
 				no.material_override = novo_mat
 	for filho in no.get_children():
 		_aplicar_cor_recursivo(filho, cor)
-

@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://c8x08bumvd7h3" path="res://scripts/mapa_primavera.gd" id="1_alwm1"]
 [ext_resource type="MeshLibrary" uid="uid://cbcck2aox3ltk" path="res://Resources/Primavera.meshlib" id="1_qswpk"]
 [ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_alwm1"]
-[ext_resource type="PackedScene" uid="uid://2bq8y0yu8ip1" path="res://Scenes/inimigo_basico.tscn" id="2_ctoxc"]
 [ext_resource type="Script" uid="uid://bbw7pdnojs4u5" path="res://scripts/gerenciador_ui.gd" id="5_unaey"]
 [ext_resource type="PackedScene" uid="uid://epjm2kpwtoer" path="res://Scenes/cena_canhao.tscn" id="6_unaey"]
 [ext_resource type="PackedScene" uid="uid://dhijxvdpqd6sb" path="res://Scenes/cena_balista.tscn" id="7_2dpx2"]
@@ -93,7 +92,6 @@ size = Vector3(7.373071, 32.89145, 7.5959997)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
 script = ExtResource("1_alwm1")
-cena_inimigo = ExtResource("2_ctoxc")
 
 [node name="GridMapPrimavera" type="GridMap" parent="." unique_id=1788637306]
 mesh_library = ExtResource("1_qswpk")
@@ -132,7 +130,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3705149, 0)
 curve = SubResource("Curve3D_qswpk")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=1990182895]
-transform = Transform3D(-0.011490085, 0, -0.9999192, 0, 1, 0, 0.9999192, 0, -0.011490085, -15.4468565, 0, -3.5160255)
+transform = Transform3D(-0.0114900805, 0, -0.9999188, 0, 1, 0, 0.9999188, 0, -0.0114900805, -15.4468565, 0, -3.5160255)
 
 [node name="Path3D2" type="Path3D" parent="." unique_id=1591000590]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8056288, 0)

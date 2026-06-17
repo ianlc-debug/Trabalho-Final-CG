@@ -85,4 +85,3 @@ func _spawnar_particulas_impacto() -> void:
 	
 	# Liberação automática
 	get_tree().create_timer(0.6).timeout.connect(part.queue_free)
-
