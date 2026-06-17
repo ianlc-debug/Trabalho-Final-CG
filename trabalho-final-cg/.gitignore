@@ -1,6 +1,0 @@
-# Godot 4+ specific ignores
-.godot/
-/android/
-
-# MCP and Godot AI plugin ignores
-addons/godot_ai/
