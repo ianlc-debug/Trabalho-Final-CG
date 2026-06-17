@@ -6,12 +6,16 @@ extends CanvasLayer
 @export var cena_catapulta: PackedScene
 @export var cena_mina: PackedScene
 
+# --- Preload da Nova Torre de Gelo ---
+var cena_gelo: PackedScene = preload("res://Scenes/cena_gelo.tscn")
+
 # --- Sistema de economia e validação ---
 @export var ouro_inicial: int = 300
 @export var custo_canhao: int = 100
 @export var custo_balista: int = 75
 @export var custo_catapulta: int = 150
 @export var custo_mina: int = 125
+var custo_gelo: int = 125
 
 @onready var mapa_3d: Node3D = get_parent()
 @onready var camera: Camera3D = $"../GridMapPrimavera/Camera3D2"
@@ -20,6 +24,7 @@ extends CanvasLayer
 @onready var botao_balista: Button = $HBoxContainer/BotaoBalista
 @onready var botao_catapulta: Button = $HBoxContainer/BotaoCatapulta
 @onready var botao_mina: Button = $HBoxContainer/BotaoMina
+var botao_gelo: Button = null
 
 var ouro: int
 var arrastando: bool = false
@@ -32,35 +37,43 @@ var local_valido: bool = false
 
 var label_ouro: Label
 var label_mensagem: Label
+var label_vidas: Label
 
-# --- Interface de Onda e Melhoria ---
+# --- Interface de Onda, Melhoria e Derrota ---
 var construcao_selecionada: Node3D = null
 var painel_melhoria: PanelContainer = null
 var label_titulo_melhoria: Label = null
 var label_status_melhoria: Label = null
 var botao_melhorar: Button = null
 var botao_vender: Button = null
+var botao_upgrade_gelo: Button = null
 
 var painel_onda: PanelContainer = null
 var label_onda_status: Label = null
 var botao_onda_skip: Button = null
 
-# --- NOVAS VARIÁVEIS: Cooldown e Limite de Tempo ---
-var cooldown_tempo: float = 3.0  # Tempo de espera após colocar uma torre
+var painel_derrota: PanelContainer = null
+
+# --- Cooldown, Limite de Tempo e Guias ---
+var cooldown_tempo: float = 2.0  # Reduzido para 2 segundos
 var cooldown_restante: float = 0.0
 
-var tempo_limite_posicionamento: float = 12.0  # Tempo limite para posicionar a torre fantasma
+var tempo_limite_posicionamento: float = 12.0
 var tempo_limite_restante: float = 0.0
+
+var tempo_guia_spawn: float = 0.0
+var lista_guias: Array = []
 
 
 func _ready() -> void:
 	ouro = ouro_inicial
 	_criar_labels()
+	_adicionar_botao_gelo()
 	_adicionar_labels_custo()
 	_atualizar_label_ouro()
 	_mostrar_mensagem("Escolha uma construção.")
 	
-	# Usando o sinal pressed (clique único) em vez de arrastar com mouse pressionado
+	# Conexões de botões para click-to-place
 	botao_canhao.pressed.connect(_iniciar_colocacao.bind(cena_canhao, custo_canhao, "Canhão"))
 	botao_balista.pressed.connect(_iniciar_colocacao.bind(cena_balista, custo_balista, "Balista"))
 	botao_catapulta.pressed.connect(_iniciar_colocacao.bind(cena_catapulta, custo_catapulta, "Catapulta"))
@@ -68,28 +81,44 @@ func _ready() -> void:
 
 
 func _criar_labels() -> void:
+	# Label de Ouro
 	label_ouro = Label.new()
 	add_child(label_ouro)
 	label_ouro.position = Vector2(20, 20)
 	label_ouro.add_theme_font_size_override("font_size", 20)
 	label_ouro.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 	
+	# Label de Mensagem
 	label_mensagem = Label.new()
 	add_child(label_mensagem)
 	label_mensagem.position = Vector2(20, 50)
 	label_mensagem.add_theme_font_size_override("font_size", 14)
 	
+	# Label de Vidas (Base Health)
+	label_vidas = Label.new()
+	add_child(label_vidas)
+	label_vidas.position = Vector2(20, 80)
+	label_vidas.add_theme_font_size_override("font_size", 18)
+	label_vidas.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))
+	
 	_criar_ui_onda()
 	_criar_ui_melhorias()
+	_criar_ui_derrota()
 
 
-# --- ADICIONADO: Exibe o custo de cada torre acima de seu ícone ---
+# --- ADICIONADO: Adiciona o botão de Gelo dinamicamente ao menu ---
+func _adicionar_botao_gelo() -> void:
+	return # A torre de gelo agora é uma melhoria (upgrade), não se compra na loja.
+
+
+# --- MODIFICADO: Exibe o custo de cada torre acima de seu ícone ---
 func _adicionar_labels_custo() -> void:
 	var botoes_e_custos = [
 		{"botao": botao_canhao, "custo": custo_canhao},
 		{"botao": botao_balista, "custo": custo_balista},
 		{"botao": botao_catapulta, "custo": custo_catapulta},
-		{"botao": botao_mina, "custo": custo_mina}
+		{"botao": botao_mina, "custo": custo_mina},
+		{"botao": botao_gelo, "custo": custo_gelo}
 	]
 	
 	var hbox = $HBoxContainer
@@ -100,7 +129,6 @@ func _adicionar_labels_custo() -> void:
 		var cost = item["custo"]
 		if not btn: continue
 		
-		# Salvar posição na hierarquia do HBox
 		var index = btn.get_index()
 		hbox.remove_child(btn)
 		
@@ -114,7 +142,7 @@ func _adicionar_labels_custo() -> void:
 		lbl.text = str(cost) + " G"
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		lbl.add_theme_font_size_override("font_size", 13)
-		lbl.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0)) # Dourado
+		lbl.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 		
 		vbox.add_child(btn)
 
@@ -206,28 +234,65 @@ func _criar_ui_melhorias() -> void:
 	botao_vender.text = "Vender"
 	botao_vender.add_theme_font_size_override("font_size", 12)
 	botao_vender.button_down.connect(_on_botao_vender_pressed)
+	
+	# Botão de Upgrade para Torre de Gelo
+	botao_upgrade_gelo = Button.new()
+	vbox.add_child(botao_upgrade_gelo)
+	botao_upgrade_gelo.text = "Evoluir para Gelo (125 Ouro)"
+	botao_upgrade_gelo.add_theme_font_size_override("font_size", 12)
+	botao_upgrade_gelo.modulate = Color(0.4, 0.8, 1.0)
+	botao_upgrade_gelo.visible = false
+	botao_upgrade_gelo.button_down.connect(_on_botao_upgrade_gelo_pressed)
 
 
-func _atualizar_label_ouro() -> void:
-	if label_ouro:
-		label_ouro.text = "Ouro: " + str(ouro)
+# --- ADICIONADO: UI de Derrota (Game Over) ---
+func _criar_ui_derrota() -> void:
+	painel_derrota = PanelContainer.new()
+	add_child(painel_derrota)
+	painel_derrota.visible = false
+	
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.2, 0.05, 0.05, 0.95) # Vermelho escuro
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_left = 12
+	style.corner_radius_bottom_right = 12
+	style.content_margin_left = 30
+	style.content_margin_right = 30
+	style.content_margin_top = 20
+	style.content_margin_bottom = 20
+	style.shadow_color = Color(0, 0, 0, 0.6)
+	style.shadow_size = 10
+	painel_derrota.add_theme_stylebox_override("panel", style)
+	
+	painel_derrota.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	
+	var vbox = VBoxContainer.new()
+	painel_derrota.add_child(vbox)
+	vbox.add_theme_constant_override("separation", 15)
+	
+	var lbl_title = Label.new()
+	vbox.add_child(lbl_title)
+	lbl_title.text = "FIM DE JOGO"
+	lbl_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_title.add_theme_font_size_override("font_size", 24)
+	lbl_title.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))
+	
+	var lbl_sub = Label.new()
+	vbox.add_child(lbl_sub)
+	lbl_sub.text = "Sua base foi destruída!"
+	lbl_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl_sub.add_theme_font_size_override("font_size", 14)
+	
+	var btn_restart = Button.new()
+	vbox.add_child(btn_restart)
+	btn_restart.text = "Jogar Novamente"
+	btn_restart.add_theme_font_size_override("font_size", 14)
+	btn_restart.button_down.connect(_on_botao_recomecar_pressed)
 
 
-func _mostrar_mensagem(texto: String) -> void:
-	if label_mensagem:
-		label_mensagem.text = texto
-	print(texto)
-
-
-func adicionar_ouro(valor: int) -> void:
-	ouro += valor
-	_atualizar_label_ouro()
-	_mostrar_mensagem("+" + str(valor) + " de ouro. Total: " + str(ouro))
-
-
-func _gastar_ouro(valor: int) -> void:
-	ouro -= valor
-	_atualizar_label_ouro()
+func _on_botao_recomecar_pressed() -> void:
+	get_tree().reload_current_scene()
 
 
 func _iniciar_colocacao(cena_escolhida: PackedScene, custo: int, nome_construcao: String) -> void:
@@ -274,6 +339,8 @@ func _confirmar_colocacao() -> void:
 		
 	_gastar_ouro(custo_construcao_atual)
 	
+	var pos_construcao = torre_fantasma.global_position
+	
 	if torre_fantasma.has_node("Alcance"):
 		torre_fantasma.get_node("Alcance").visible = false
 		
@@ -290,8 +357,10 @@ func _confirmar_colocacao() -> void:
 	arrastando = false
 	_limpar_arraste()
 	
-	# Iniciar o cooldown de posicionamento
 	cooldown_restante = cooldown_tempo
+	
+	# Efeito visual de poeira/faíscas douradas ao construir
+	_spawnar_particulas_construcao(pos_construcao, Color(1.0, 0.85, 0.3))
 
 
 func _cancelar_colocacao() -> void:
@@ -310,6 +379,18 @@ func _limpar_arraste() -> void:
 
 
 func _process(delta: float) -> void:
+	# Atualizar HUD de Vidas
+	if is_instance_valid(mapa_3d):
+		var vidas = mapa_3d.get("base_health")
+		label_vidas.text = "Vidas: " + str(vidas)
+		if vidas <= 5:
+			label_vidas.add_theme_color_override("font_color", Color(1.0, 0.1, 0.1)) # Vermelho forte
+			
+		var perdeu = mapa_3d.get("jogo_perdido")
+		if perdeu and painel_derrota:
+			painel_derrota.visible = true
+	
+	# Cooldown de colocação
 	if cooldown_restante > 0:
 		cooldown_restante -= delta
 		_atualizar_botoes_cooldown()
@@ -317,17 +398,116 @@ func _process(delta: float) -> void:
 			_mostrar_mensagem("Recarga de construção finalizada.")
 			_atualizar_botoes_cooldown()
 	
+	# Ghost Tower movimento
 	if arrastando and torre_fantasma:
 		mover_torre_com_mouse()
 		
-		# Contagem de limite de tempo para posicionar
+		# Limite de tempo para posicionar
 		tempo_limite_restante -= delta
 		label_mensagem.text = "Clique para comprar " + nome_construcao_atual + ". Tempo restante: " + str(int(tempo_limite_restante)) + "s"
 		if tempo_limite_restante <= 0:
 			_cancelar_colocacao()
 			_mostrar_mensagem("Tempo esgotado para posicionar a torre!")
 	
+	# Efeito de Partículas Guia ao longo dos caminhos na fase de preparação
+	_atualizar_guias_caminho(delta)
+	
 	_atualizar_ui_onda()
+
+
+# --- ADICIONADO: Atualização e movimentação das partículas guias ---
+func _atualizar_guias_caminho(delta: float) -> void:
+	if not is_instance_valid(mapa_3d): return
+	
+	var em_esp = mapa_3d.get("em_espera")
+	var perdeu = mapa_3d.get("jogo_perdido")
+	var venceu = mapa_3d.get("jogo_vencido")
+	
+	if em_esp and not perdeu and not venceu:
+		tempo_guia_spawn += delta
+		if tempo_guia_spawn >= 1.5: # Spawn de uma partícula guia a cada 1.5s
+			tempo_guia_spawn = 0.0
+			_spawnar_guia_caminho()
+			
+		# Mover os guias
+		var i = lista_guias.size() - 1
+		while i >= 0:
+			var guia = lista_guias[i]
+			if is_instance_valid(guia):
+				guia.progress += 8.0 * delta # velocidade do guia
+				if guia.progress_ratio >= 0.99:
+					guia.queue_free()
+					lista_guias.remove_at(i)
+			else:
+				lista_guias.remove_at(i)
+			i -= 1
+	else:
+		# Se a onda começou ou acabou, limpa todos os guias
+		if lista_guias.size() > 0:
+			for g in lista_guias:
+				if is_instance_valid(g):
+					g.queue_free()
+			lista_guias.clear()
+
+
+func _spawnar_guia_caminho() -> void:
+	if not is_instance_valid(mapa_3d): return
+	var caminhos = [mapa_3d.get("caminho_1"), mapa_3d.get("caminho_2")]
+	
+	for caminho in caminhos:
+		if not is_instance_valid(caminho): continue
+		
+		var seguidor = PathFollow3D.new()
+		seguidor.loop = false
+		
+		# Criação de um pequeno cristal flutuante brilhante
+		var mesh_inst = MeshInstance3D.new()
+		var sm = SphereMesh.new()
+		sm.radius = 0.1
+		sm.height = 0.2
+		
+		var mat = StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = Color(0.1, 0.8, 1.0, 0.7) # Ciano brilhante
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		sm.material = mat
+		mesh_inst.mesh = sm
+		
+		# Eleva um pouco acima do chão
+		mesh_inst.position = Vector3(0, 0.4, 0)
+		
+		seguidor.add_child(mesh_inst)
+		caminho.add_child(seguidor)
+		lista_guias.append(seguidor)
+
+
+# --- ADICIONADO: Helper para criar explosões de partículas CPUParticles3D ---
+func _spawnar_particulas_construcao(pos: Vector3, cor: Color) -> void:
+	var part = CPUParticles3D.new()
+	part.emitting = true
+	part.one_shot = true
+	part.explosiveness = 0.8
+	part.amount = 25
+	part.lifetime = 0.6
+	
+	var sm = SphereMesh.new()
+	sm.radius = 0.08
+	sm.height = 0.16
+	
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = cor
+	sm.material = mat
+	part.mesh = sm
+	
+	part.direction = Vector3.UP
+	part.spread = 180.0
+	part.initial_velocity_min = 2.5
+	part.initial_velocity_max = 5.0
+	
+	mapa_3d.add_child(part)
+	part.global_position = pos + Vector3(0, 0.5, 0)
+	
+	get_tree().create_timer(1.0).timeout.connect(part.queue_free)
 
 
 func _atualizar_botoes_cooldown() -> void:
@@ -337,6 +517,8 @@ func _atualizar_botoes_cooldown() -> void:
 	botao_balista.disabled = em_cooldown
 	botao_catapulta.disabled = em_cooldown
 	botao_mina.disabled = em_cooldown
+	if botao_gelo:
+		botao_gelo.disabled = em_cooldown
 	
 	if em_cooldown:
 		label_mensagem.text = "Recarga de construção: " + str(snapped(cooldown_restante, 0.1)) + "s"
@@ -418,6 +600,9 @@ func _remover_material_recursivo(no: Node) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Se perdeu o jogo, desabilita cliques
+	if is_instance_valid(mapa_3d) and mapa_3d.get("jogo_perdido"): return
+	
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if arrastando:
@@ -499,6 +684,8 @@ func _atualizar_painel_melhoria() -> void:
 		nome_exibir = "Catapulta"
 	elif "mina" in nome_l:
 		nome_exibir = "Mina de Ouro"
+	elif "gelo" in nome_l:
+		nome_exibir = "Ice Tower"
 		
 	label_titulo_melhoria.text = nome_exibir + " (Nvl " + str(nivel) + ")"
 	
@@ -555,6 +742,20 @@ func _atualizar_painel_melhoria() -> void:
 		
 	var valor_venda = construcao_selecionada.obter_valor_venda()
 	botao_vender.text = "Vender (+" + str(valor_venda) + ")"
+	
+	# Lógica do Botão de Upgrade para Torre de Gelo
+	if botao_upgrade_gelo:
+		var pode_evoluir = false
+		if not "mina" in nome_l and not "gelo" in nome_l:
+			if _is_ice_phase():
+				pode_evoluir = true
+				
+		if pode_evoluir:
+			botao_upgrade_gelo.visible = true
+			botao_upgrade_gelo.text = "Evoluir para Gelo (" + str(custo_gelo) + " G)"
+			botao_upgrade_gelo.disabled = (ouro < custo_gelo)
+		else:
+			botao_upgrade_gelo.visible = false
 
 
 func _on_botao_melhorar_pressed() -> void:
@@ -566,9 +767,15 @@ func _on_botao_melhorar_pressed() -> void:
 		return
 		
 	_gastar_ouro(custo_up)
+	
+	var pos_torre = construcao_selecionada.global_position
+	
 	construcao_selecionada.melhorar()
 	_mostrar_mensagem("Melhorado com sucesso!")
 	_atualizar_painel_melhoria()
+	
+	# Efeito de faíscas verdes ao melhorar
+	_spawnar_particulas_construcao(pos_torre, Color(0.2, 1.0, 0.4))
 
 
 func _on_botao_vender_pressed() -> void:
@@ -577,9 +784,14 @@ func _on_botao_vender_pressed() -> void:
 	var valor_venda = construcao_selecionada.obter_valor_venda()
 	adicionar_ouro(valor_venda)
 	
+	var pos_torre = construcao_selecionada.global_position
+	
 	var construcao_a_deletar = construcao_selecionada
 	_deselecionar_construcao()
 	construcao_a_deletar.queue_free()
+	
+	# Efeito de cinza/poeira vermelha ao vender
+	_spawnar_particulas_construcao(pos_torre, Color(1.0, 0.3, 0.3))
 
 
 func _on_botao_skip_wave_pressed() -> void:
@@ -616,3 +828,77 @@ func _atualizar_ui_onda() -> void:
 	else:
 		label_onda_status.text = "Onda: " + str(onda_at + 1) + "/" + str(total_ondas) + "\nRestam: " + str(inimigos_vivos + fila_size)
 		botao_onda_skip.visible = false
+
+
+func _atualizar_label_ouro() -> void:
+	if label_ouro:
+		label_ouro.text = "Ouro: " + str(ouro)
+
+
+func _mostrar_mensagem(texto: String) -> void:
+	if label_mensagem:
+		label_mensagem.text = texto
+	print(texto)
+
+
+func adicionar_ouro(valor: int) -> void:
+	ouro += valor
+	_atualizar_label_ouro()
+	_mostrar_mensagem("+" + str(valor) + " de ouro. Total: " + str(ouro))
+
+
+func _gastar_ouro(valor: int) -> void:
+	ouro -= valor
+	_atualizar_label_ouro()
+
+
+func _is_ice_phase() -> bool:
+	if not is_instance_valid(mapa_3d):
+		return false
+	
+	var map_name = mapa_3d.name.to_lower()
+	var map_path = mapa_3d.scene_file_path.to_lower()
+	
+	# Se for mapa de inverno (Inverno ou Gelo no nome/path)
+	if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+		return true
+		
+	# Se for onda >= 2 (onda 3, 4 ou 5)
+	var onda_at = mapa_3d.get("onda_atual")
+	if onda_at != null and onda_at >= 2:
+		return true
+		
+	return false
+
+
+func _on_botao_upgrade_gelo_pressed() -> void:
+	if not is_instance_valid(construcao_selecionada): return
+	
+	if ouro < custo_gelo:
+		_mostrar_mensagem("Ouro insuficiente para evoluir para Torre de Gelo! Custo: " + str(custo_gelo))
+		return
+		
+	_gastar_ouro(custo_gelo)
+	
+	var pos_torre = construcao_selecionada.global_position
+	var rot_torre = construcao_selecionada.global_rotation
+	
+	# Criação da nova torre de gelo
+	var nova_torre = cena_gelo.instantiate()
+	nova_torre.global_position = pos_torre
+	nova_torre.global_rotation = rot_torre
+	
+	mapa_3d.add_child(nova_torre)
+	
+	if nova_torre.has_method("ativar_torre"):
+		nova_torre.ativar_torre()
+		
+	# Remove a antiga
+	var construcao_a_deletar = construcao_selecionada
+	_deselecionar_construcao()
+	construcao_a_deletar.queue_free()
+	
+	_mostrar_mensagem("Torre evoluída para Torre de Gelo!")
+	
+	# VFX de faíscas congeladas/ciano no upgrade
+	_spawnar_particulas_construcao(pos_torre, Color(0.2, 0.8, 1.0))

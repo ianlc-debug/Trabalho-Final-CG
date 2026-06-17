@@ -97,6 +97,8 @@ func _atacar(inimigo: Node3D) -> void:
 		
 		# Ativa o projétil passando quem ele deve perseguir e o dano desta torre
 		bala.configurar(inimigo, dano)
+		if "gelo" in name.to_lower() or "gelo" in scene_file_path.to_lower():
+			bala.set("eh_gelo", true)
 		print(name, " disparou munição visual!")
 	else:
 		# Sistema de segurança: se esquecerem de colocar a munição no Inspector, dá o dano antigo direto
@@ -128,6 +130,8 @@ func custo_compra_original() -> int:
 		return 75
 	elif "catapulta" in nome_l:
 		return 150
+	elif "gelo" in nome_l:
+		return 125
 	return 100
 
 
@@ -167,4 +171,3 @@ func _aplicar_cor_recursivo(no: Node, cor: Color) -> void:
 				no.material_override = novo_mat
 	for filho in no.get_children():
 		_aplicar_cor_recursivo(filho, cor)
-

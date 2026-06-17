@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://dc4csu4mrsmha" path="res://scripts/torre_atatque.gd" id="1_gyh7n"]
+[ext_resource type="PackedScene" uid="uid://dwyea81qd6dnb" path="res://assets/tower-round-crystals.glb" id="2_crystal"]
+[ext_resource type="PackedScene" path="res://Scenes/projetil_gelo.tscn" id="3_projetil"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crystal"]
+transparency = 1
+albedo_color = Color(0, 0.6, 1.0, 0.5)
+
+[sub_resource type="SphereMesh" id="SphereMesh_range"]
+material = SubResource("StandardMaterial3D_crystal")
+radius = 2.0
+height = 4.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_gelo"]
+height = 1.8
+radius = 0.8
+
+[node name="CenaGelo" type="Node3D"]
+script = ExtResource("1_gyh7n")
+cena_projetil = ExtResource("3_projetil")
+dano = 6
+alcance = 7.5
+intervalo_ataque = 1.2
+
+[node name="tower-round-crystals" parent="." instance=ExtResource("2_crystal")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Alcance" type="MeshInstance3D" parent="."]
+visible = false
+cast_shadow = 0
+mesh = SubResource("SphereMesh_range")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CylinderShape3D_gelo")

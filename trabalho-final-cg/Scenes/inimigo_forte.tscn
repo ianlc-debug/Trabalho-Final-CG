@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://db56mkrw4w1tq"]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" uid="uid://bixj5xshk8dp" path="res://assets/enemy-ufo-d.glb" id="1_bodl0"]
+[ext_resource type="PackedScene" uid="uid://iljuk5xne3pn" path="res://assets/enemy-ufo-d.glb" id="1_bodl0"]
 [ext_resource type="Script" uid="uid://bk6ncqrjxuel2" path="res://scripts/inimigo_basico.gd" id="1_farlq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]

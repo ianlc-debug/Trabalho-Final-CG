@@ -62,6 +62,8 @@ var fila_spawn: Array[PackedScene] = []
 var inimigos_vivos: int = 0
 var proximo_caminho_index: int = 0
 var jogo_vencido: bool = false
+var base_health: int = 20
+var jogo_perdido: bool = false
 
 @onready var ui_gerenciador = $UI
 
@@ -72,7 +74,7 @@ func _ready():
 
 
 func _process(delta: float) -> void:
-	if jogo_vencido:
+	if jogo_vencido or jogo_perdido:
 		return
 		
 	if em_espera:
@@ -82,6 +84,9 @@ func _process(delta: float) -> void:
 
 
 func iniciar_proxima_onda() -> void:
+	if jogo_perdido:
+		return
+		
 	if onda_atual >= configuracao_ondas.size():
 		jogo_vencido = true
 		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
@@ -196,3 +201,27 @@ func _finalizar_onda() -> void:
 		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
 			ui_gerenciador._mostrar_mensagem("Onda " + str(onda_atual) + " concluída! + " + str(recompensa) + " Ouro.")
 
+
+func registrar_dano_base() -> void:
+	if jogo_perdido or jogo_vencido:
+		return
+		
+	base_health -= 1
+	if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
+		ui_gerenciador._mostrar_mensagem("Base invadida! Vidas restantes: " + str(base_health))
+		
+	if base_health <= 0:
+		_disparar_derrota()
+
+
+func _disparar_derrota() -> void:
+	jogo_perdido = true
+	timer.stop()
+	
+	# Parar todos os inimigos ativos no mapa
+	for inimigo in get_tree().get_nodes_in_group("inimigos"):
+		if is_instance_valid(inimigo):
+			inimigo.set("velocidade", 0.0)
+			
+	if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
+		ui_gerenciador._mostrar_mensagem("Fim de Jogo! Você foi derrotado.")

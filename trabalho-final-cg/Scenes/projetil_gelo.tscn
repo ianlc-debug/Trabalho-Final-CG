@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bg8c5ik5q286g" path="res://scripts/projetil.gd" id="1_s7scn"]
+[ext_resource type="PackedScene" uid="uid://borjs62fwgagf" path="res://assets/weapon-ammo-bullet.glb" id="2_bullet"]
+
+[node name="ProjetilGelo" type="Node3D"]
+script = ExtResource("1_s7scn")
+velocidade = 25.0
+
+[node name="weapon-ammo-bullet" parent="." instance=ExtResource("2_bullet")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
