@@ -180,11 +180,32 @@ func _on_inimigo_saiu_da_arvore() -> void:
 
 
 func _atualizar_inimigos_vivos() -> void:
+	# 1. Proteção contra o crash ao reiniciar
+	if not is_inside_tree():
+		return
+		
+	# 2. Contagem real dos inimigos ativos no jogo
 	var inimigos = get_tree().get_nodes_in_group("inimigos")
 	inimigos_vivos = inimigos.size()
 	
-	if inimigos_vivos == 0 and fila_spawn.is_empty() and not em_spawn and not em_espera:
-		_finalizar_onda()
+	# 3. Lógica de avanço de ondas
+	if fila_spawn.is_empty() and inimigos_vivos == 0 and not em_espera and not jogo_vencido:
+		# --- LINHA DE OURO ADICIONADA: Dá ouro ao jogador pelo fim da onda ---
+		# Procura o nó da UI e chama o método "adicionar_ouro" que está no seu gerenciador_ui.gd
+		var gerenciador_ui = get_node_or_null("UI") # Ajuste o caminho se a UI não estiver direto na raiz do mapa
+		if gerenciador_ui and gerenciador_ui.has_method("adicionar_ouro"):
+			gerenciador_ui.adicionar_ouro(100) # <- Mude 100 para o valor de bônus que você preferir!
+
+		# Verifica se ainda existem mais ondas configuradas
+		if onda_atual + 1 < configuracao_ondas.size():
+			em_espera = true
+			tempo_espera_restante = 10.0 
+			onda_atual += 1
+			print("Onda finalizada! Preparando onda: ", onda_atual + 1)
+		else:
+			# Se não há mais ondas, o jogador venceu o mapa
+			jogo_vencido = true
+			print("Parabéns! Você venceu o jogo!")
 
 
 func _finalizar_onda() -> void:

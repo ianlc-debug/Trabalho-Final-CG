@@ -10,8 +10,7 @@ albedo_color = Color(1, 1, 1, 0.54509807)
 
 [sub_resource type="SphereMesh" id="SphereMesh_gyh7n"]
 material = SubResource("StandardMaterial3D_j7np6")
-radius = 2.0
-height = 4.0
+radius = 8.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_balista"]
 height = 1.6
@@ -21,7 +20,6 @@ radius = 0.7
 script = ExtResource("1_gyh7n")
 cena_projetil = ExtResource("2_nm8tc")
 dano = 15
-alcance = 12.0
 intervalo_ataque = 0.8
 
 [node name="weapon-ballista2" parent="." unique_id=21449301 instance=ExtResource("1_j7np6")]
@@ -32,9 +30,8 @@ visible = false
 cast_shadow = 0
 mesh = SubResource("SphereMesh_gyh7n")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1274336236]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1832033746]
 shape = SubResource("CylinderShape3D_balista")
-
