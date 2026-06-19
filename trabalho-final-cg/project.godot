@@ -15,20 +15,12 @@ run/main_scene="uid://d4i8m821ere6n"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
-[autoload]
-
-_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
-
 [display]
 
 window/size/viewport_width=1152
 window/size/viewport_height=648
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
 
 [physics]
 
