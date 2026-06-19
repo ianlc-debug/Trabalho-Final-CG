@@ -243,7 +243,20 @@ func _adicionar_labels_custo() -> void:
 		var progress_overlay = TextureProgressBar.new()
 		progress_overlay.name = "CooldownOverlay"
 		progress_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		progress_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		
+		# Adicionar ao botão antes de configurar layout de âncoras para que o parent esteja definido
+		btn.add_child(progress_overlay)
+		
+		# Forçar preenchimento do retângulo do botão via âncoras de forma robusta
+		progress_overlay.anchor_left = 0.0
+		progress_overlay.anchor_top = 0.0
+		progress_overlay.anchor_right = 1.0
+		progress_overlay.anchor_bottom = 1.0
+		progress_overlay.offset_left = 0
+		progress_overlay.offset_top = 0
+		progress_overlay.offset_right = 0
+		progress_overlay.offset_bottom = 0
+		
 		progress_overlay.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		progress_overlay.nine_patch_stretch = true
 		progress_overlay.custom_minimum_size = Vector2(64, 64)
@@ -261,7 +274,6 @@ func _adicionar_labels_custo() -> void:
 		progress_overlay.max_value = 100.0
 		progress_overlay.value = 0.0 # Começa invisível
 		
-		btn.add_child(progress_overlay)
 		barras_cooldown[btn.name] = progress_overlay
 
 
@@ -546,6 +558,7 @@ func _process(delta: float) -> void:
 	for nome in cooldowns_restantes.keys():
 		var rest = cooldowns_restantes[nome]
 		if rest > 0.0:
+			var old_rest = rest
 			rest -= delta
 			cooldowns_restantes[nome] = max(rest, 0.0)
 			
@@ -555,12 +568,16 @@ func _process(delta: float) -> void:
 				if overlay:
 					var max_cd = cooldowns_maximos.get(nome, 2.0)
 					overlay.value = (rest / max_cd) * 100.0
+					# Print debug no console a cada segundo de transição
+					if int(old_rest) != int(rest):
+						print("COOLDOWN: ", nome, " restante: ", snapped(rest, 0.1), "s (Progresso: ", snapped(overlay.value, 1), "%)")
 		else:
 			var btn = _obter_botao_por_nome(nome)
 			if btn:
 				var overlay = barras_cooldown.get(btn.name)
-				if overlay:
+				if overlay and overlay.value > 0.0:
 					overlay.value = 0.0
+					print("COOLDOWN: ", nome, " recarregado!")
 	
 	# Ghost Tower movimento
 	if arrastando and torre_fantasma:
