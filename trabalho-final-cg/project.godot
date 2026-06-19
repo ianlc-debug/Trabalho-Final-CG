@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Trabalho Final CG"
-run/main_scene="uid://bmf8jtwnr0q8h"
+run/main_scene="uid://d4i8m821ere6n"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 

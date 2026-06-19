@@ -1,0 +1,165 @@
+[gd_scene format=3 uid="uid://d4i8m821ere6n"]
+
+[ext_resource type="Texture2D" uid="uid://c4a0xudfgnqv" path="res://Resources/ImagemInicial.jpeg" id="1_gjtjt"]
+[ext_resource type="Script" uid="uid://d3241bpptw2he" path="res://scripts/menu_principal.gd" id="1_y4xp8"]
+[ext_resource type="PackedScene" uid="uid://bmf8jtwnr0q8h" path="res://Scenes/MapaPrimavera.tscn" id="2_heqfu"]
+[ext_resource type="PackedScene" uid="uid://bom0orf1eh5la" path="res://Scenes/MapaInverno.tscn" id="3_ni8uq"]
+[ext_resource type="Texture2D" uid="uid://jahm10riwb8c" path="res://Resources/ImagemFases.png" id="3_xe6lt"]
+[ext_resource type="Texture2D" uid="uid://jtlfoncbpa5i" path="res://Resources/ImagemCreditos.png" id="4_xe6lt"]
+
+[node name="MenuPrincipal" type="Control" unique_id=7155853]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y4xp8")
+cena_primavera = ExtResource("2_heqfu")
+cena_inverno = ExtResource("3_ni8uq")
+
+[node name="TelaInicial" type="Control" parent="." unique_id=1545088677]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Fundo" type="TextureRect" parent="TelaInicial" unique_id=1522447197]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_gjtjt")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BotaoJogar" type="Button" parent="TelaInicial" unique_id=453665469]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.37500003
+anchor_top = 0.523
+anchor_right = 0.633
+anchor_bottom = 0.69600004
+offset_left = -3.0517578e-05
+offset_top = 0.09597778
+offset_right = -0.21600342
+offset_bottom = 0.1852417
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="BotaoCreditos" type="Button" parent="TelaInicial" unique_id=305629194]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.088541664
+anchor_top = 0.89400005
+anchor_right = 0.23
+anchor_bottom = 0.97700006
+offset_top = -0.31201172
+offset_right = 0.040008545
+offset_bottom = -0.0960083
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="TelaFases" type="Control" parent="." unique_id=2005309172]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="FundoFases" type="TextureRect" parent="TelaFases" unique_id=643930150]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_xe6lt")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BotaoInverno" type="Button" parent="TelaFases" unique_id=1677289398]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5423195
+anchor_top = 0.76080245
+anchor_right = 0.734
+anchor_bottom = 0.84400004
+offset_left = 0.24798584
+offset_right = -0.5680542
+offset_bottom = 0.08795166
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="BotaoPrimavera" type="Button" parent="TelaFases" unique_id=879654953]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.28558335
+anchor_top = 0.762
+anchor_right = 0.46100003
+anchor_bottom = 0.846
+offset_left = 0.0079956055
+offset_top = 0.22399902
+offset_right = -0.072021484
+offset_bottom = -0.20800781
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="BotaoVoltar" type="Button" parent="TelaFases" unique_id=1278536908]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.098090276
+anchor_top = 0.8873457
+anchor_right = 0.23545139
+anchor_bottom = 0.97100013
+offset_right = -0.23999023
+offset_bottom = -0.20806885
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
+
+[node name="TelaCreditos" type="Control" parent="." unique_id=520170197]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FundoCreditos" type="TextureRect" parent="TelaCreditos" unique_id=2003790194]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_xe6lt")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BotaoVoltarCreditos" type="Button" parent="TelaCreditos" unique_id=443212893]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.09900001
+anchor_top = 0.87854326
+anchor_right = 0.22999999
+anchor_bottom = 0.95699996
+offset_left = -0.04800415
+offset_top = -0.2960205
+offset_right = 0.040008545
+offset_bottom = -0.13598633
+mouse_default_cursor_shape = 2
+flat = true
+metadata/_edit_use_anchors_ = true
