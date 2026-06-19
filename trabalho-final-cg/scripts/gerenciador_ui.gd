@@ -570,23 +570,6 @@ func _process(delta: float) -> void:
 					var max_cd = cooldowns_maximos.get(nome, 2.0)
 					overlay.value = (rest / max_cd) * 100.0
 					
-					# Salvar log em res://cooldown_debug.log para diagnóstico do agente
-					var f = FileAccess.open("res://cooldown_debug.log", FileAccess.WRITE)
-					if f:
-						f.store_line("COOLDOWN ACTIVE:")
-						f.store_line("Nome: " + nome)
-						f.store_line("Rest: " + str(rest))
-						f.store_line("Max CD: " + str(max_cd))
-						f.store_line("Button Name: " + btn.name)
-						f.store_line("Button Size: " + str(btn.size))
-						f.store_line("Overlay Name: " + overlay.name)
-						f.store_line("Overlay Size: " + str(overlay.size))
-						f.store_line("Overlay Value: " + str(overlay.value))
-						f.store_line("Overlay Visible: " + str(overlay.visible))
-						f.store_line("Overlay Tint: " + str(overlay.tint_progress))
-						f.store_line("Texture Progress: " + str(overlay.texture_progress))
-						f.close()
-						
 					# Print debug no console a cada segundo de transição
 					if int(old_rest) != int(rest):
 						print("COOLDOWN: ", nome, " restante: ", snapped(rest, 0.1), "s (Progresso: ", snapped(overlay.value, 1), "%)")

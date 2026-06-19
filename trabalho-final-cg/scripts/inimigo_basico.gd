@@ -13,6 +13,10 @@ var fator_lentidao: float = 1.0
 var tempo_lentidao: float = 0.0
 var material_lento: StandardMaterial3D = null
 
+# --- ADICIONADO: Efeito de Rastro ---
+var tempo_acumulado_rastro: float = 0.0
+@export var intervalo_rastro: float = 0.12
+
 
 func _ready():
 	vida_atual = vida_maxima
@@ -25,6 +29,12 @@ func _ready():
 
 
 func _process(delta):
+	# Atualizar e spawnar rastro de elipses verdes
+	tempo_acumulado_rastro += delta
+	if tempo_acumulado_rastro >= intervalo_rastro:
+		tempo_acumulado_rastro = 0.0
+		_spawnar_elipse_rastro()
+
 	# Decrementar tempo de lentidão
 	if tempo_lentidao > 0.0:
 		tempo_lentidao -= delta
@@ -93,3 +103,46 @@ func _remover_material_recursivo(no: Node) -> void:
 		no.material_override = null
 	for filho in no.get_children():
 		_remover_material_recursivo(filho)
+
+
+func _spawnar_elipse_rastro() -> void:
+	var seguidor = get_parent()
+	if not seguidor or not (seguidor is PathFollow3D):
+		return
+		
+	var mapa = seguidor.get_parent().get_parent()
+	if not is_instance_valid(mapa):
+		return
+		
+	var mesh_inst = MeshInstance3D.new()
+	
+	var torus = TorusMesh.new()
+	torus.inner_radius = 0.22
+	torus.outer_radius = 0.28
+	torus.ring_segments = 4
+	torus.rings = 24
+	
+	var mat = StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color(0.2, 1.0, 0.4, 0.7) # Verde brilhante
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	torus.material = mat
+	mesh_inst.mesh = torus
+	
+	# Adiciona no mapa para que o rastro fique parado no mundo 3D
+	mapa.add_child(mesh_inst)
+	
+	# Posicionar ligeiramente abaixo do OVNI
+	mesh_inst.global_position = global_position - Vector3(0, 0.15, 0)
+	mesh_inst.global_rotation = global_rotation
+	
+	# Formato de elipse (alongado horizontalmente)
+	mesh_inst.scale = Vector3(1.3, 0.1, 0.7)
+	
+	# Animar expansão e fade out
+	var tween = mesh_inst.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(mesh_inst, "scale", Vector3(2.6, 0.05, 1.4), 0.6)
+	tween.tween_property(mat, "albedo_color", Color(0.2, 1.0, 0.4, 0.0), 0.6)
+	tween.set_parallel(false)
+	tween.tween_callback(mesh_inst.queue_free)
