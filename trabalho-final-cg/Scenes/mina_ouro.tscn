@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://csk0fj1oir5ug" path="res://assets/Mine/stylized_gold_mine.glb" id="1_f7n4j"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mina"]
-size = Vector3(1.6, 1.4, 1.6)
+size = Vector3(1.8, 1.4, 1.8)
 
 [node name="MinaOuro" type="Node3D" unique_id=117611019]
 script = ExtResource("1_e4mp5")

@@ -728,6 +728,31 @@ func mover_torre_com_mouse() -> void:
 	
 	torre_fantasma.global_position = result["position"]
 	
+	# Verificar sobreposição volumétrica tridimensional da torre fantasma com outras construções ou áreas proibidas
+	var e_sobreposto = false
+	var shape_node = torre_fantasma.get_node_or_null("StaticBody3D/CollisionShape3D")
+	if shape_node and shape_node.shape:
+		var query_params = PhysicsShapeQueryParameters3D.new()
+		query_params.shape = shape_node.shape
+		# Aplicar a posição global e o offset local da CollisionShape3D
+		query_params.transform = Transform3D(Basis(), result["position"] + shape_node.position)
+		query_params.collide_with_bodies = true
+		query_params.collide_with_areas = true
+		query_params.exclude = _obter_rids_colisores(torre_fantasma)
+		
+		var overlaps = space_state.intersect_shape(query_params)
+		for collision in overlaps:
+			var col_node = collision["collider"]
+			var col_parent = col_node.get_parent()
+			
+			# Ignorar o chão/terreno se for StaticBody3D ou GridMap do mapa
+			if col_parent == mapa_3d or col_node == mapa_3d.get_node_or_null("StaticBody3D"):
+				continue
+				
+			if col_node.is_in_group("area_proibida") or col_node.is_in_group("construcoes") or (col_parent and (col_parent.is_in_group("construcoes") or col_parent.has_method("obter_custo_upgrade"))):
+				e_sobreposto = true
+				break
+	
 	var collider = result["collider"]
 	var pai_collider = collider.get_parent()
 	var e_construcao = false
@@ -735,9 +760,9 @@ func mover_torre_com_mouse() -> void:
 	if pai_collider and (pai_collider.is_in_group("construcoes") or pai_collider.has_method("obter_custo_upgrade")):
 		e_construcao = true
 		
-	if collider.is_in_group("area_proibida") or e_construcao:
+	if collider.is_in_group("area_proibida") or e_construcao or e_sobreposto:
 		local_valido = false
-		if e_construcao:
+		if e_construcao or e_sobreposto:
 			label_mensagem.text = "Espaço ocupado por outra construção!"
 		else:
 			label_mensagem.text = "Local inválido para construir!"
@@ -1019,6 +1044,10 @@ func _atualizar_ui_onda() -> void:
 	if vencido:
 		label_onda_status.text = "Vitória Completa!"
 		botao_onda_skip.visible = false
+		if botao_pausa:
+			botao_pausa.visible = false
+		painel_onda.reset_size()
+		painel_onda.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 		return
 		
 	if em_esp:
