@@ -18,13 +18,15 @@ var cena_gelo: PackedScene = preload("res://Scenes/cena_gelo.tscn")
 var custo_gelo: int = 125
 
 @onready var mapa_3d: Node3D = get_parent()
-@onready var camera: Camera3D = $"../GridMapPrimavera/Camera3D2"
+var camera: Camera3D = null
 
 @onready var botao_canhao: Button = $HBoxContainer/BotaoCanhao
 @onready var botao_balista: Button = $HBoxContainer/BotaoBalista
 @onready var botao_catapulta: Button = $HBoxContainer/BotaoCatapulta
 @onready var botao_mina: Button = $HBoxContainer/BotaoMina
 var botao_gelo: Button = null
+var botao_pausa: Button = null
+var hbox_loja: HBoxContainer = null
 
 var ouro: int
 var arrastando: bool = false
@@ -54,9 +56,23 @@ var botao_onda_skip: Button = null
 
 var painel_derrota: PanelContainer = null
 
-# --- Cooldown, Limite de Tempo e Guias ---
-var cooldown_tempo: float = 2.0  # Reduzido para 2 segundos
-var cooldown_restante: float = 0.0
+var cooldowns_maximos = {
+	"Canhão": 3.0,
+	"Balista": 2.0,
+	"Catapulta": 5.0,
+	"Mina": 4.0
+}
+var cooldowns_restantes = {
+	"Canhão": 0.0,
+	"Balista": 0.0,
+	"Catapulta": 0.0,
+	"Mina": 0.0
+}
+var barras_cooldown = {} # Key: Button name, Value: TextureProgressBar
+
+var mouse_pressed_on_button: bool = false
+var mouse_start_pos: Vector2
+var drag_mode: bool = false
 
 var tempo_limite_posicionamento: float = 12.0
 var tempo_limite_restante: float = 0.0
@@ -66,18 +82,58 @@ var lista_guias: Array = []
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	ouro = ouro_inicial
+	hbox_loja = $HBoxContainer
+	
+	# Encontrar a câmera do mapa ativo
+	var cam = get_node_or_null("../GridMapPrimavera/Camera3D2")
+	if not cam:
+		cam = get_node_or_null("../GridMapInverno/Camera3D2")
+	if cam:
+		camera = cam
+		# Ajustar a posição da câmera ligeiramente para mover o mapa para cima na tela
+		camera.position.z += 1.5
+		camera.position.y += 0.5
+		
+	# Ajustar cor de fundo (Clear Color) dependendo do mapa
+	if is_instance_valid(mapa_3d):
+		var map_name = mapa_3d.name.to_lower()
+		var map_path = mapa_3d.scene_file_path.to_lower()
+		if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+			RenderingServer.set_default_clear_color(Color(0.88, 0.92, 0.95)) # Branco/neve azulado
+		else:
+			RenderingServer.set_default_clear_color(Color(0.35, 0.62, 0.42)) # Verde suave
+			
+	_criar_fundo_loja()
 	_criar_labels()
 	_adicionar_botao_gelo()
 	_adicionar_labels_custo()
 	_atualizar_label_ouro()
 	_mostrar_mensagem("Escolha uma construção.")
 	
-	# Conexões de botões para click-to-place
-	botao_canhao.pressed.connect(_iniciar_colocacao.bind(cena_canhao, custo_canhao, "Canhão"))
-	botao_balista.pressed.connect(_iniciar_colocacao.bind(cena_balista, custo_balista, "Balista"))
-	botao_catapulta.pressed.connect(_iniciar_colocacao.bind(cena_catapulta, custo_catapulta, "Catapulta"))
-	botao_mina.pressed.connect(_iniciar_colocacao.bind(cena_mina, custo_mina, "Mina"))
+	# Conexões de botões para click-to-place e drag-and-drop
+	botao_canhao.button_down.connect(_on_botao_down.bind(cena_canhao, custo_canhao, "Canhão"))
+	botao_balista.button_down.connect(_on_botao_down.bind(cena_balista, custo_balista, "Balista"))
+	botao_catapulta.button_down.connect(_on_botao_down.bind(cena_catapulta, custo_catapulta, "Catapulta"))
+	botao_mina.button_down.connect(_on_botao_down.bind(cena_mina, custo_mina, "Mina"))
+
+
+func _on_botao_down(cena: PackedScene, custo: int, nome: String) -> void:
+	if get_tree().paused:
+		_mostrar_mensagem("Não é possível construir com o jogo pausado!")
+		return
+		
+	# Verificar cooldown individual
+	if cooldowns_restantes.get(nome, 0.0) > 0.0:
+		_mostrar_mensagem("Aguarde a recarga de " + nome + "!")
+		return
+		
+	_iniciar_colocacao(cena, custo, nome)
+	if arrastando:
+		mouse_pressed_on_button = true
+		mouse_start_pos = get_viewport().get_mouse_position()
+		drag_mode = false
 
 
 func _criar_labels() -> void:
@@ -106,6 +162,40 @@ func _criar_labels() -> void:
 	_criar_ui_derrota()
 
 
+# --- ADICIONADO: Envelopa a loja num painel com fundo colorido ---
+func _criar_fundo_loja() -> void:
+	var hbox = hbox_loja
+	if not hbox: return
+	
+	# Criar PanelContainer para envelopar a loja
+	var painel_loja = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.08, 0.08, 0.1, 0.85) # Cinza escuro com ciano sutil, translúcido
+	style.corner_radius_top_left = 10
+	style.corner_radius_top_right = 10
+	style.corner_radius_bottom_left = 10
+	style.corner_radius_bottom_right = 10
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	style.shadow_color = Color(0, 0, 0, 0.4)
+	style.shadow_size = 6
+	painel_loja.add_theme_stylebox_override("panel", style)
+	
+	# Ajustar o espaçamento interno do HBoxContainer
+	hbox.add_theme_constant_override("separation", 10)
+	
+	# Mover HBoxContainer para dentro do painel
+	add_child(painel_loja)
+	remove_child(hbox)
+	painel_loja.add_child(hbox)
+	
+	# Configurar âncoras e posição no centro inferior da tela
+	painel_loja.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 12)
+	painel_loja.position.y -= 10
+
+
 # --- ADICIONADO: Adiciona o botão de Gelo dinamicamente ao menu ---
 func _adicionar_botao_gelo() -> void:
 	return # A torre de gelo agora é uma melhoria (upgrade), não se compra na loja.
@@ -121,7 +211,7 @@ func _adicionar_labels_custo() -> void:
 		{"botao": botao_gelo, "custo": custo_gelo}
 	]
 	
-	var hbox = $HBoxContainer
+	var hbox = hbox_loja
 	if not hbox: return
 	
 	for item in botoes_e_custos:
@@ -144,7 +234,33 @@ func _adicionar_labels_custo() -> void:
 		lbl.add_theme_font_size_override("font_size", 13)
 		lbl.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 		
+		# Padronizar o tamanho dos botões e ajustar o ícone
+		btn.custom_minimum_size = Vector2(64, 64)
+		btn.expand_icon = true
 		vbox.add_child(btn)
+		
+		# Criar overlay de cooldown estilo PVZ (ascendente/sweep vertical)
+		var progress_overlay = TextureProgressBar.new()
+		progress_overlay.name = "CooldownOverlay"
+		progress_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		progress_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		progress_overlay.fill_mode = TextureProgressBar.FILL_TOP_TO_BOTTOM
+		progress_overlay.nine_patch_stretch = true
+		
+		# Criar textura branca 1x1 em tempo de execução
+		var img = Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		img.fill(Color.WHITE)
+		var tex = ImageTexture.create_from_image(img)
+		progress_overlay.texture_progress = tex
+		
+		# Estilo escuro transparente
+		progress_overlay.tint_progress = Color(0.0, 0.0, 0.0, 0.6)
+		progress_overlay.min_value = 0.0
+		progress_overlay.max_value = 100.0
+		progress_overlay.value = 0.0 # Começa invisível
+		
+		btn.add_child(progress_overlay)
+		barras_cooldown[btn.name] = progress_overlay
 
 
 func _criar_ui_onda() -> void:
@@ -163,9 +279,6 @@ func _criar_ui_onda() -> void:
 	style.content_margin_bottom = 8
 	painel_onda.add_theme_stylebox_override("panel", style)
 	
-	painel_onda.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	painel_onda.position = Vector2(get_viewport().size.x - 320, 20)
-	
 	var hbox = HBoxContainer.new()
 	painel_onda.add_child(hbox)
 	hbox.add_theme_constant_override("separation", 10)
@@ -180,6 +293,17 @@ func _criar_ui_onda() -> void:
 	botao_onda_skip.text = "Iniciar Onda"
 	botao_onda_skip.add_theme_font_size_override("font_size", 12)
 	botao_onda_skip.button_down.connect(_on_botao_skip_wave_pressed)
+	
+	# Botão de Pausa
+	botao_pausa = Button.new()
+	hbox.add_child(botao_pausa)
+	botao_pausa.text = "Pausar"
+	botao_pausa.add_theme_font_size_override("font_size", 12)
+	botao_pausa.button_down.connect(_on_botao_pausa_pressed)
+	
+	# Recalcular tamanho e manter ancorado corretamente
+	painel_onda.reset_size()
+	painel_onda.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 
 
 func _criar_ui_melhorias() -> void:
@@ -200,9 +324,6 @@ func _criar_ui_melhorias() -> void:
 	style.shadow_color = Color(0, 0, 0, 0.4)
 	style.shadow_size = 5
 	painel_melhoria.add_theme_stylebox_override("panel", style)
-	
-	painel_melhoria.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	painel_melhoria.position = Vector2(get_viewport().size.x - 300, get_viewport().size.y - 280)
 	
 	var vbox = VBoxContainer.new()
 	painel_melhoria.add_child(vbox)
@@ -243,6 +364,10 @@ func _criar_ui_melhorias() -> void:
 	botao_upgrade_gelo.modulate = Color(0.4, 0.8, 1.0)
 	botao_upgrade_gelo.visible = false
 	botao_upgrade_gelo.button_down.connect(_on_botao_upgrade_gelo_pressed)
+	
+	# Recalcular tamanho e manter ancorado no canto inferior direito
+	painel_melhoria.reset_size()
+	painel_melhoria.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 
 
 # --- ADICIONADO: UI de Derrota (Game Over) ---
@@ -296,8 +421,8 @@ func _on_botao_recomecar_pressed() -> void:
 
 
 func _iniciar_colocacao(cena_escolhida: PackedScene, custo: int, nome_construcao: String) -> void:
-	if cooldown_restante > 0:
-		_mostrar_mensagem("Aguarde a recarga de construção! Tempo restante: " + str(snapped(cooldown_restante, 0.1)) + "s")
+	if get_tree().paused:
+		_mostrar_mensagem("Não é possível construir com o jogo pausado!")
 		return
 		
 	if arrastando:
@@ -357,7 +482,9 @@ func _confirmar_colocacao() -> void:
 	arrastando = false
 	_limpar_arraste()
 	
-	cooldown_restante = cooldown_tempo
+	# Iniciar cooldown individual
+	var tempo_cooldown = cooldowns_maximos.get(nome_construcao_atual, 2.0)
+	cooldowns_restantes[nome_construcao_atual] = tempo_cooldown
 	
 	# Efeito visual de poeira/faíscas douradas ao construir
 	_spawnar_particulas_construcao(pos_construcao, Color(1.0, 0.85, 0.3))
@@ -390,13 +517,50 @@ func _process(delta: float) -> void:
 		if perdeu and painel_derrota:
 			painel_derrota.visible = true
 	
-	# Cooldown de colocação
-	if cooldown_restante > 0:
-		cooldown_restante -= delta
-		_atualizar_botoes_cooldown()
-		if cooldown_restante <= 0:
-			_mostrar_mensagem("Recarga de construção finalizada.")
-			_atualizar_botoes_cooldown()
+	_atualizar_ui_onda()
+	
+	# Gerenciamento de arrasto (drag and drop)
+	if mouse_pressed_on_button:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			var dist = get_viewport().get_mouse_position().distance_to(mouse_start_pos)
+			if dist > 15.0:
+				drag_mode = true
+		else:
+			# Se o botão foi solto
+			mouse_pressed_on_button = false
+			if drag_mode:
+				drag_mode = false
+				if arrastando:
+					if local_valido:
+						_confirmar_colocacao()
+					else:
+						_cancelar_colocacao()
+						_mostrar_mensagem("Construção cancelada (local inválido).")
+	
+	if get_tree().paused:
+		return
+		
+	# Atualizar cooldowns individuais e overlays estilo PVZ
+	for nome in cooldowns_restantes.keys():
+		var rest = cooldowns_restantes[nome]
+		if rest > 0.0:
+			rest -= delta
+			cooldowns_restantes[nome] = max(rest, 0.0)
+			
+			var btn = _obter_botao_por_nome(nome)
+			if btn:
+				btn.disabled = true
+				var overlay = barras_cooldown.get(btn.name)
+				if overlay:
+					var max_cd = cooldowns_maximos.get(nome, 2.0)
+					overlay.value = (rest / max_cd) * 100.0
+		else:
+			var btn = _obter_botao_por_nome(nome)
+			if btn and btn.disabled:
+				btn.disabled = false
+				var overlay = barras_cooldown.get(btn.name)
+				if overlay:
+					overlay.value = 0.0
 	
 	# Ghost Tower movimento
 	if arrastando and torre_fantasma:
@@ -411,8 +575,6 @@ func _process(delta: float) -> void:
 	
 	# Efeito de Partículas Guia ao longo dos caminhos na fase de preparação
 	_atualizar_guias_caminho(delta)
-	
-	_atualizar_ui_onda()
 
 
 # --- ADICIONADO: Atualização e movimentação das partículas guias ---
@@ -510,18 +672,13 @@ func _spawnar_particulas_construcao(pos: Vector3, cor: Color) -> void:
 	get_tree().create_timer(1.0).timeout.connect(part.queue_free)
 
 
-func _atualizar_botoes_cooldown() -> void:
-	var em_cooldown = cooldown_restante > 0
-	
-	botao_canhao.disabled = em_cooldown
-	botao_balista.disabled = em_cooldown
-	botao_catapulta.disabled = em_cooldown
-	botao_mina.disabled = em_cooldown
-	if botao_gelo:
-		botao_gelo.disabled = em_cooldown
-	
-	if em_cooldown:
-		label_mensagem.text = "Recarga de construção: " + str(snapped(cooldown_restante, 0.1)) + "s"
+func _obter_botao_por_nome(nome: String) -> Button:
+	match nome:
+		"Canhão": return botao_canhao
+		"Balista": return botao_balista
+		"Catapulta": return botao_catapulta
+		"Mina": return botao_mina
+	return null
 
 
 func _obter_rids_colisores(no: Node) -> Array:
@@ -603,6 +760,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Se perdeu o jogo, desabilita cliques
 	if is_instance_valid(mapa_3d) and mapa_3d.get("jogo_perdido"): return
 	
+	# Se o jogo estiver pausado, bloqueia cliques de construção/seleção
+	if get_tree().paused:
+		if event is InputEventMouseButton:
+			return
+	
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if arrastando:
@@ -618,6 +780,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			if arrastando:
 				_cancelar_colocacao()
 				get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_I:
+			var novo_estado = not Salvamento.is_inverno_concluido()
+			Salvamento.salvar_inverno_concluido(novo_estado)
+			_mostrar_mensagem("DEBUG: Conclusao do Inverno alterada para: " + str(novo_estado))
+			_atualizar_painel_melhoria()
+			get_viewport().set_input_as_handled()
 
 
 func _tentar_selecionar_construcao() -> void:
@@ -756,6 +924,10 @@ func _atualizar_painel_melhoria() -> void:
 			botao_upgrade_gelo.disabled = (ouro < custo_gelo)
 		else:
 			botao_upgrade_gelo.visible = false
+			
+	# Recalcular tamanho e manter ancorado no canto inferior direito
+	painel_melhoria.reset_size()
+	painel_melhoria.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 
 
 func _on_botao_melhorar_pressed() -> void:
@@ -801,13 +973,22 @@ func _on_botao_skip_wave_pressed() -> void:
 			mapa_3d.iniciar_proxima_onda()
 
 
+func _on_botao_pausa_pressed() -> void:
+	var pausado = get_tree().paused
+	get_tree().paused = not pausado
+	if get_tree().paused:
+		botao_pausa.text = "Continuar"
+		botao_pausa.modulate = Color(1.0, 0.5, 0.5)
+		_mostrar_mensagem("Jogo Pausado")
+	else:
+		botao_pausa.text = "Pausar"
+		botao_pausa.modulate = Color(1.0, 1.0, 1.0)
+		_mostrar_mensagem("Jogo Retomado")
+
+
 func _atualizar_ui_onda() -> void:
 	if not painel_onda or not is_instance_valid(mapa_3d): return
 	
-	painel_onda.position = Vector2(get_viewport().size.x - 300, 20)
-	if painel_melhoria:
-		painel_melhoria.position = Vector2(get_viewport().size.x - 300, get_viewport().size.y - 280)
-		
 	var onda_at = mapa_3d.get("onda_atual")
 	var total_ondas = mapa_3d.get("configuracao_ondas").size()
 	var em_esp = mapa_3d.get("em_espera")
@@ -828,6 +1009,10 @@ func _atualizar_ui_onda() -> void:
 	else:
 		label_onda_status.text = "Onda: " + str(onda_at + 1) + "/" + str(total_ondas) + "\nRestam: " + str(inimigos_vivos + fila_size)
 		botao_onda_skip.visible = false
+			
+	# Recalcular tamanho e manter ancorado no canto superior direito
+	painel_onda.reset_size()
+	painel_onda.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 
 
 func _atualizar_label_ouro() -> void:
@@ -863,10 +1048,11 @@ func _is_ice_phase() -> bool:
 	if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
 		return true
 		
-	# Se for onda >= 2 (onda 3, 4 ou 5)
-	var onda_at = mapa_3d.get("onda_atual")
-	if onda_at != null and onda_at >= 2:
-		return true
+	# Se for outro mapa (ex: primavera), só desbloqueia se a fase de inverno já tiver sido concluída
+	if Salvamento.is_inverno_concluido():
+		var onda_at = mapa_3d.get("onda_atual")
+		if onda_at != null and onda_at >= 2:
+			return true
 		
 	return false
 

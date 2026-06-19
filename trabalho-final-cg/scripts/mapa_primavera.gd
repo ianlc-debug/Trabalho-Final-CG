@@ -61,7 +61,11 @@ var tempo_espera_restante: float = 12.0
 var fila_spawn: Array[PackedScene] = []
 var inimigos_vivos: int = 0
 var proximo_caminho_index: int = 0
-var jogo_vencido: bool = false
+var jogo_vencido: bool = false:
+	set(valor):
+		jogo_vencido = valor
+		if jogo_vencido:
+			_verificar_salvamento_inverno()
 var base_health: int = 20
 var jogo_perdido: bool = false
 
@@ -249,3 +253,10 @@ func _disparar_derrota() -> void:
 			
 	if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
 		ui_gerenciador._mostrar_mensagem("Fim de Jogo! Você foi derrotado.")
+
+
+func _verificar_salvamento_inverno() -> void:
+	var map_name = name.to_lower()
+	var map_path = scene_file_path.to_lower()
+	if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+		Salvamento.salvar_inverno_concluido(true)

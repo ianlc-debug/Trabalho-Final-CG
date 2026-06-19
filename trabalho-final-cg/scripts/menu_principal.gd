@@ -78,3 +78,12 @@ func _on_botao_inverno_pressed() -> void:
 		get_tree().change_scene_to_packed(cena_inverno)
 	else:
 		get_tree().change_scene_to_file("res://Scenes/mapa_inverno.tscn")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_I:
+			var novo_estado = not Salvamento.is_inverno_concluido()
+			Salvamento.salvar_inverno_concluido(novo_estado)
+			print("MENU DEBUG: Conclusao do Inverno alterada para: ", novo_estado)
+
