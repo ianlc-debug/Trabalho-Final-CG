@@ -1,0 +1,12 @@
+COOLDOWN ACTIVE:
+Nome: Mina
+Rest: -0.01656433333333
+Max CD: 4.0
+Button Name: BotaoMina
+Button Size: (64.0, 64.0)
+Overlay Name: CooldownOverlay
+Overlay Size: (64.0, 64.0)
+Overlay Value: 0.0
+Overlay Visible: true
+Overlay Tint: (0.0, 0.0, 0.0, 0.6)
+Texture Progress: ():<ImageTexture#-9223371968101742116>
