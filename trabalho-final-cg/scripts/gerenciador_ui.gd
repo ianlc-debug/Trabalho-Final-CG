@@ -239,16 +239,16 @@ func _adicionar_labels_custo() -> void:
 		btn.expand_icon = true
 		vbox.add_child(btn)
 		
-		# Criar overlay de cooldown estilo PVZ (ascendente/sweep vertical)
+		# Criar overlay de cooldown estilo PVZ (sweep radial horário / clockwise)
 		var progress_overlay = TextureProgressBar.new()
 		progress_overlay.name = "CooldownOverlay"
 		progress_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		progress_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		progress_overlay.fill_mode = TextureProgressBar.FILL_TOP_TO_BOTTOM
+		progress_overlay.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		progress_overlay.nine_patch_stretch = true
 		
-		# Criar textura branca 1x1 em tempo de execução
-		var img = Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		# Criar textura branca 64x64 em tempo de execução
+		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 		img.fill(Color.WHITE)
 		var tex = ImageTexture.create_from_image(img)
 		progress_overlay.texture_progress = tex
