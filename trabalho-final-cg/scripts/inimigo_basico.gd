@@ -71,12 +71,76 @@ func tomar_dano(dano: int):
 func morrer():
 	print("Inimigo morreu!")
 	
-	var seguidor = get_parent()
+	_spawnar_explosao()
 	
+	var seguidor = get_parent()
 	if seguidor is PathFollow3D:
 		seguidor.queue_free()
 	else:
 		queue_free()
+
+
+func _spawnar_explosao() -> void:
+	var seguidor = get_parent()
+	if not seguidor:
+		return
+	var mapa = seguidor.get_parent().get_parent()
+	if not is_instance_valid(mapa):
+		return
+		
+	var pos_explosao = global_position
+	
+	# 1. Bolha de explosão (Esfera que cresce e some)
+	var bubble = MeshInstance3D.new()
+	var sm = SphereMesh.new()
+	sm.radius = 0.4
+	sm.height = 0.8
+	
+	var mat_bubble = StandardMaterial3D.new()
+	mat_bubble.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat_bubble.albedo_color = Color(1.0, 0.6, 0.1, 0.9) # Laranja fogo
+	mat_bubble.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	sm.material = mat_bubble
+	bubble.mesh = sm
+	
+	mapa.add_child(bubble)
+	bubble.global_position = pos_explosao
+	
+	# Animar a bolha (cresce e some rápido)
+	var tween = bubble.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(bubble, "scale", Vector3(2.5, 2.5, 2.5), 0.35)
+	tween.tween_property(mat_bubble, "albedo_color", Color(1.0, 0.2, 0.0, 0.0), 0.35)
+	tween.set_parallel(false)
+	tween.tween_callback(bubble.queue_free)
+	
+	# 2. Partículas (Faíscas/Pedaços)
+	var part = CPUParticles3D.new()
+	part.emitting = true
+	part.one_shot = true
+	part.explosiveness = 0.9
+	part.amount = 15
+	part.lifetime = 0.5
+	
+	var spark_mesh = SphereMesh.new()
+	spark_mesh.radius = 0.06
+	spark_mesh.height = 0.12
+	
+	var mat_spark = StandardMaterial3D.new()
+	mat_spark.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat_spark.albedo_color = Color(1.0, 0.8, 0.2) # Amarelo/Dourado
+	spark_mesh.material = mat_spark
+	part.mesh = spark_mesh
+	
+	part.direction = Vector3.UP
+	part.spread = 180.0
+	part.initial_velocity_min = 2.0
+	part.initial_velocity_max = 5.0
+	
+	mapa.add_child(part)
+	part.global_position = pos_explosao
+	
+	get_tree().create_timer(0.8).timeout.connect(part.queue_free)
 
 
 func aplicar_lentidao(fator: float, tempo: float) -> void:
