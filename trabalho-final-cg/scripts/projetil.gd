@@ -9,6 +9,11 @@ var _ultima_posicao_alvo: Vector3
 # --- ADICIONADO: Variável de Gelo ---
 var eh_gelo: bool = false
 
+# --- Recursos compartilhados para evitar stutters de compilação de shader e alocação de memória ---
+static var _mesh_particula_impacto: SphereMesh = null
+static var _material_impacto_fogo: StandardMaterial3D = null
+static var _material_impacto_gelo: StandardMaterial3D = null
+
 
 # Função chamada pela torre assim que a munição nasce
 func configurar(alvo_node: Node3D, dano_torre: int) -> void:
@@ -61,17 +66,26 @@ func _spawnar_particulas_impacto() -> void:
 	part.amount = 12
 	part.lifetime = 0.4
 	
-	# Criação da mesh para as partículas
-	var sm = SphereMesh.new()
-	sm.radius = 0.06
-	sm.height = 0.12
-	
-	var mat = StandardMaterial3D.new()
+	# Garante que a mesh compartilhada existe
+	if not _mesh_particula_impacto:
+		_mesh_particula_impacto = SphereMesh.new()
+		_mesh_particula_impacto.radius = 0.06
+		_mesh_particula_impacto.height = 0.12
+		
+	var mat: StandardMaterial3D
 	if eh_gelo:
-		mat.albedo_color = Color(0.0, 0.7, 1.0) # Azul gelo brilhante
+		if not _material_impacto_gelo:
+			_material_impacto_gelo = StandardMaterial3D.new()
+			_material_impacto_gelo.albedo_color = Color(0.0, 0.7, 1.0) # Azul gelo brilhante
+		mat = _material_impacto_gelo
 	else:
-		mat.albedo_color = Color(1.0, 0.45, 0.1) # Laranja fogo
+		if not _material_impacto_fogo:
+			_material_impacto_fogo = StandardMaterial3D.new()
+			_material_impacto_fogo.albedo_color = Color(1.0, 0.45, 0.1) # Laranja fogo
+		mat = _material_impacto_fogo
 	
+	# Usa a mesh e o material compartilhados
+	var sm = _mesh_particula_impacto
 	sm.material = mat
 	part.mesh = sm
 	

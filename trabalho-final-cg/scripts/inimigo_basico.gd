@@ -11,11 +11,19 @@ var vida_atual: int
 # --- ADICIONADO: Variáveis de Lentidão ---
 var fator_lentidao: float = 1.0
 var tempo_lentidao: float = 0.0
-var material_lento: StandardMaterial3D = null
 
 # --- ADICIONADO: Efeito de Rastro ---
 var tempo_acumulado_rastro: float = 0.0
 @export var intervalo_rastro: float = 0.12
+
+# --- Recursos estáticos compartilhados para evitar alocações constantes e stutters de shader ---
+static var _mesh_bubble: SphereMesh = null
+static var _mesh_spark: SphereMesh = null
+static var _mesh_rastro: TorusMesh = null
+static var _material_bubble_base: StandardMaterial3D = null
+static var _material_spark: StandardMaterial3D = null
+static var _material_rastro_base: StandardMaterial3D = null
+static var _material_lento: StandardMaterial3D = null
 
 
 func _ready():
@@ -90,16 +98,22 @@ func _spawnar_explosao() -> void:
 		
 	var pos_explosao = global_position
 	
+	# Garante que os recursos de bolha estão criados e compartilhados
+	if not _mesh_bubble:
+		_mesh_bubble = SphereMesh.new()
+		_mesh_bubble.radius = 0.4
+		_mesh_bubble.height = 0.8
+	if not _material_bubble_base:
+		_material_bubble_base = StandardMaterial3D.new()
+		_material_bubble_base.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_material_bubble_base.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	
 	# 1. Bolha de explosão (Esfera que cresce e some)
 	var bubble = MeshInstance3D.new()
-	var sm = SphereMesh.new()
-	sm.radius = 0.4
-	sm.height = 0.8
-	
-	var mat_bubble = StandardMaterial3D.new()
-	mat_bubble.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var mat_bubble = _material_bubble_base.duplicate()
 	mat_bubble.albedo_color = Color(1.0, 0.6, 0.1, 0.9) # Laranja fogo
-	mat_bubble.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	
+	var sm = _mesh_bubble
 	sm.material = mat_bubble
 	bubble.mesh = sm
 	
@@ -114,6 +128,16 @@ func _spawnar_explosao() -> void:
 	tween.set_parallel(false)
 	tween.tween_callback(bubble.queue_free)
 	
+	# Garante que os recursos de partículas estão criados e compartilhados
+	if not _mesh_spark:
+		_mesh_spark = SphereMesh.new()
+		_mesh_spark.radius = 0.06
+		_mesh_spark.height = 0.12
+	if not _material_spark:
+		_material_spark = StandardMaterial3D.new()
+		_material_spark.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_material_spark.albedo_color = Color(1.0, 0.8, 0.2) # Amarelo/Dourado
+	
 	# 2. Partículas (Faíscas/Pedaços)
 	var part = CPUParticles3D.new()
 	part.emitting = true
@@ -122,14 +146,8 @@ func _spawnar_explosao() -> void:
 	part.amount = 15
 	part.lifetime = 0.5
 	
-	var spark_mesh = SphereMesh.new()
-	spark_mesh.radius = 0.06
-	spark_mesh.height = 0.12
-	
-	var mat_spark = StandardMaterial3D.new()
-	mat_spark.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat_spark.albedo_color = Color(1.0, 0.8, 0.2) # Amarelo/Dourado
-	spark_mesh.material = mat_spark
+	var spark_mesh = _mesh_spark
+	spark_mesh.material = _material_spark
 	part.mesh = spark_mesh
 	
 	part.direction = Vector3.UP
@@ -147,12 +165,12 @@ func aplicar_lentidao(fator: float, tempo: float) -> void:
 	fator_lentidao = min(fator_lentidao, fator)
 	tempo_lentidao = max(tempo_lentidao, tempo)
 	
-	if not material_lento:
-		material_lento = StandardMaterial3D.new()
-		material_lento.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		material_lento.albedo_color = Color(0.0, 0.5, 1.0, 0.4) # Azul Gelo translúcido
+	if not _material_lento:
+		_material_lento = StandardMaterial3D.new()
+		_material_lento.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_material_lento.albedo_color = Color(0.0, 0.5, 1.0, 0.4) # Azul Gelo translúcido
 		
-	_aplicar_material_recursivo(self, material_lento)
+	_aplicar_material_recursivo(self, _material_lento)
 
 
 func _aplicar_material_recursivo(no: Node, mat: Material) -> void:
@@ -178,18 +196,23 @@ func _spawnar_elipse_rastro() -> void:
 	if not is_instance_valid(mapa):
 		return
 		
+	# Garante que os recursos do rastro estão criados e compartilhados
+	if not _mesh_rastro:
+		_mesh_rastro = TorusMesh.new()
+		_mesh_rastro.inner_radius = 0.22
+		_mesh_rastro.outer_radius = 0.28
+		_mesh_rastro.ring_segments = 4
+		_mesh_rastro.rings = 24
+	if not _material_rastro_base:
+		_material_rastro_base = StandardMaterial3D.new()
+		_material_rastro_base.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_material_rastro_base.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		
 	var mesh_inst = MeshInstance3D.new()
-	
-	var torus = TorusMesh.new()
-	torus.inner_radius = 0.22
-	torus.outer_radius = 0.28
-	torus.ring_segments = 4
-	torus.rings = 24
-	
-	var mat = StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var mat = _material_rastro_base.duplicate()
 	mat.albedo_color = Color(0.2, 1.0, 0.4, 0.7) # Verde brilhante
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	
+	var torus = _mesh_rastro
 	torus.material = mat
 	mesh_inst.mesh = torus
 	
