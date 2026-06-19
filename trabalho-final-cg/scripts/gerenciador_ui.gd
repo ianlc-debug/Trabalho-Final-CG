@@ -246,6 +246,8 @@ func _adicionar_labels_custo() -> void:
 		progress_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		progress_overlay.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		progress_overlay.nine_patch_stretch = true
+		progress_overlay.custom_minimum_size = Vector2(64, 64)
+		progress_overlay.size = Vector2(64, 64)
 		
 		# Criar textura branca 64x64 em tempo de execução
 		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
@@ -549,15 +551,13 @@ func _process(delta: float) -> void:
 			
 			var btn = _obter_botao_por_nome(nome)
 			if btn:
-				btn.disabled = true
 				var overlay = barras_cooldown.get(btn.name)
 				if overlay:
 					var max_cd = cooldowns_maximos.get(nome, 2.0)
 					overlay.value = (rest / max_cd) * 100.0
 		else:
 			var btn = _obter_botao_por_nome(nome)
-			if btn and btn.disabled:
-				btn.disabled = false
+			if btn:
 				var overlay = barras_cooldown.get(btn.name)
 				if overlay:
 					overlay.value = 0.0
