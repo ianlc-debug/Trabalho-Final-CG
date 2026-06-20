@@ -18,6 +18,7 @@ var nivel_maximo: int = 3
 
 func _ready() -> void:
 	add_to_group("construcoes")
+	configurar_cor_alcance()
 
 
 func ativar_torre() -> void:
@@ -159,10 +160,13 @@ func melhorar() -> void:
 		cor_nivel = Color(1.0, 0.84, 0.0) # Gold
 	
 	_aplicar_cor_recursivo(self, cor_nivel)
+	configurar_cor_alcance()
 
 
 func _aplicar_cor_recursivo(no: Node, cor: Color) -> void:
 	if no is MeshInstance3D:
+		if no.name == "Alcance":
+			return # Não queremos mudar a cor do indicador de alcance
 		var mat = no.get_active_material(0)
 		if mat:
 			var novo_mat = mat.duplicate()
@@ -171,3 +175,45 @@ func _aplicar_cor_recursivo(no: Node, cor: Color) -> void:
 				no.material_override = novo_mat
 	for filho in no.get_children():
 		_aplicar_cor_recursivo(filho, cor)
+
+
+func configurar_cor_alcance() -> void:
+	if has_node("Alcance"):
+		var alcance_node = get_node("Alcance") as MeshInstance3D
+		if alcance_node:
+			# Duplicar a mesh para evitar alterar o recurso compartilhado e atualizar o tamanho
+			if alcance_node.mesh:
+				var nova_mesh = alcance_node.mesh.duplicate()
+				if nova_mesh is SphereMesh:
+					nova_mesh.radius = alcance
+					nova_mesh.height = alcance * 2.0
+				alcance_node.mesh = nova_mesh
+				
+			# Obter o material
+			var mat = alcance_node.material_override
+			if not mat:
+				mat = alcance_node.get_active_material(0)
+			if not mat and alcance_node.mesh and "material" in alcance_node.mesh:
+				mat = alcance_node.mesh.material
+				
+			if mat:
+				var novo_mat = mat.duplicate() as StandardMaterial3D
+				if novo_mat:
+					var map_name = ""
+					var map_path = ""
+					if is_inside_tree() and get_tree().current_scene:
+						map_name = get_tree().current_scene.name.to_lower()
+						map_path = get_tree().current_scene.scene_file_path.to_lower()
+					
+					if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+						# Dourado/âmbar suave para o mapa de inverno (contrasta com a neve branca)
+						novo_mat.albedo_color = Color(0.95, 0.6, 0.1, 0.18)
+					else:
+						# Ciano suave para o mapa de primavera
+						novo_mat.albedo_color = Color(0.1, 0.65, 0.9, 0.15)
+					
+					# Estilo premium: translúcido e sem sombreamento para parecer um holograma UI limpo
+					novo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					novo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+					
+					alcance_node.material_override = novo_mat

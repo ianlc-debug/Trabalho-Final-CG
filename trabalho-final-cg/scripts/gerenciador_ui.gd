@@ -794,14 +794,31 @@ func _atualizar_cor_fantasma() -> void:
 
 func _aplicar_material_recursivo(no: Node, mat: Material) -> void:
 	if no is MeshInstance3D:
-		no.material_override = mat
+		if no.name == "Alcance":
+			if not local_valido:
+				var mat_erro = StandardMaterial3D.new()
+				mat_erro.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				mat_erro.albedo_color = Color(1.0, 0.1, 0.1, 0.15)
+				mat_erro.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				no.material_override = mat_erro
+			else:
+				var pai = no.get_parent()
+				if pai and pai.has_method("configurar_cor_alcance"):
+					pai.configurar_cor_alcance()
+		else:
+			no.material_override = mat
 	for filho in no.get_children():
 		_aplicar_material_recursivo(filho, mat)
 
 
 func _remover_material_recursivo(no: Node) -> void:
 	if no is MeshInstance3D:
-		no.material_override = null
+		if no.name == "Alcance":
+			var pai = no.get_parent()
+			if pai and pai.has_method("configurar_cor_alcance"):
+				pai.configurar_cor_alcance()
+		else:
+			no.material_override = null
 	for filho in no.get_children():
 		_remover_material_recursivo(filho)
 
