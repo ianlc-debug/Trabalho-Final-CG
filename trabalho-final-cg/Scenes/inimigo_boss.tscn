@@ -19,6 +19,7 @@ bg_color = Color(0.9, 0.6, 0, 1)
 script = ExtResource("1_farlq")
 velocidade = 1.6
 vida_maxima = 1000
+eh_chefe = true
 
 [node name="enemy-ufo-d-weapon" parent="." unique_id=577261957 instance=ExtResource("1_bodl0")]
 transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)

@@ -1048,12 +1048,20 @@ func _atualizar_ui_onda() -> void:
 	var vencido = mapa_3d.get("jogo_vencido")
 	
 	if vencido:
-		label_onda_status.text = "Vitória Completa!"
+		# 1. Esconde a caixa preta velha lá do topo
+		painel_onda.visible = false 
 		botao_onda_skip.visible = false
 		if botao_pausa:
 			botao_pausa.visible = false
-		painel_onda.reset_size()
-		painel_onda.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
+		
+		# 2. Procura a função do menu verde que criamos no mapa e a executa
+		if get_tree().current_scene.has_method("_exibir_tela_vitoria"):
+			get_tree().current_scene._exibir_tela_vitoria()
+		elif owner and owner.has_method("_exibir_tela_vitoria"):
+			owner._exibir_tela_vitoria()
+		elif get_parent() and get_parent().has_method("_exibir_tela_vitoria"):
+			get_parent()._exibir_tela_vitoria()
+			
 		return
 		
 	if em_esp:

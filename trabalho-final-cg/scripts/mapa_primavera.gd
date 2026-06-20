@@ -235,14 +235,22 @@ func _finalizar_onda() -> void:
 			ui_gerenciador._mostrar_mensagem("Onda " + str(onda_atual) + " concluída! + " + str(recompensa) + " Ouro.")
 
 
-func registrar_dano_base() -> void:
+func registrar_dano_base(eh_chefe: bool = false) -> void:
 	if jogo_perdido or jogo_vencido:
 		return
 		
-	base_health -= 1
-	if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
-		ui_gerenciador._mostrar_mensagem("Base invadida! Vidas restantes: " + str(base_health))
+	# Se a função for avisada que é o chefe, a vida vai a zero na hora
+	if eh_chefe == true:
+		base_health = 0
+		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
+			ui_gerenciador._mostrar_mensagem("O CHEFE DESTRUIU O CASTELO!")
+	else:
+		# Se não for o chefe, tira só 1 de vida (funcionamento normal)
+		base_health -= 1
+		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
+			ui_gerenciador._mostrar_mensagem("Base invadida! Vidas restantes: " + str(base_health))
 		
+	# Se a vida zerou (seja por dano normal ou pelo chefe), dispara a derrota
 	if base_health <= 0:
 		_disparar_derrota()
 
@@ -632,3 +640,146 @@ func _exibir_tela_game_over() -> void:
 			(tamanho_tela.x / 2.0) - (_menu_game_over_instancia.size.x / 2.0),
 			(tamanho_tela.y / 2.0) - (_menu_game_over_instancia.size.y / 2.0)
 		)
+
+# Variável para guardar o nosso novo painel de vitória 
+var _camada_vitoria_instancia: CanvasLayer = null
+
+func _exibir_tela_vitoria() -> void:
+	# --- 1. A TRAVA DE SEGURANÇA (Isso resolve o bug dos múltiplos cliques!) ---
+	# Se a camada já existe e está na tela, não faça absolutamente nada.
+	if is_instance_valid(_camada_vitoria_instancia):
+		return 
+
+	# Pausa o jogo instantaneamente
+	get_tree().paused = true
+
+	# 2. ESCONDER A INTERFACE ANTIGA TEIMOSA
+	var ui_alvo = null
+	if has_node("UI"): ui_alvo = get_node("UI")
+	elif has_node("GerenciadorUI"): ui_alvo = get_node("GerenciadorUI")
+	
+	if is_instance_valid(ui_alvo):
+		var nos = [ui_alvo]
+		while nos.size() > 0:
+			var atual = nos.pop_front()
+			if atual is Control and atual.visible:
+				for filho in atual.get_children():
+					if filho is Label and ("vitória" in filho.text.to_lower() or "vitoria" in filho.text.to_lower()):
+						var pai = filho.get_parent()
+						while pai and pai != ui_alvo:
+							if pai is PanelContainer or pai is Panel or pai is ColorRect:
+								pai.visible = false
+								pai.mouse_filter = Control.MOUSE_FILTER_IGNORE 
+								break
+							pai = pai.get_parent()
+			nos.append_array(atual.get_children())
+
+	# ----------------------------------------------------
+	# 3. CRIAÇÃO DO SISTEMA DE CAMADA (CANVASLAYER)
+	# ----------------------------------------------------
+	_camada_vitoria_instancia = CanvasLayer.new()
+	_camada_vitoria_instancia.layer = 120 
+	_camada_vitoria_instancia.process_mode = Node.PROCESS_MODE_ALWAYS 
+	get_tree().current_scene.add_child(_camada_vitoria_instancia)
+
+	# Fundo escuro
+	var fundo_escuro = ColorRect.new()
+	fundo_escuro.name = "VitoriaFundoOverlay"
+	fundo_escuro.anchor_right = 1.0
+	fundo_escuro.anchor_bottom = 1.0
+	fundo_escuro.color = Color(0, 0, 0, 0.6) 
+	fundo_escuro.mouse_filter = Control.MOUSE_FILTER_STOP 
+	_camada_vitoria_instancia.add_child(fundo_escuro)
+
+	# --- O SEGREDO DO POSICIONAMENTO PERFEITO ---
+	# O CenterContainer força o que estiver dentro dele a ficar no meio absoluto
+	var centro = CenterContainer.new()
+	centro.anchor_right = 1.0
+	centro.anchor_bottom = 1.0
+	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fundo_escuro.add_child(centro)
+
+	# 4. CRIAÇÃO DO PAINEL VERDE CENTRALIZADO
+	var panel_vitoria = PanelContainer.new()
+	panel_vitoria.mouse_filter = Control.MOUSE_FILTER_STOP 
+	centro.add_child(panel_vitoria) # Adicionamos no centro, e não no fundo!
+	
+	# Estilo visual de vitória 
+	var estilo_painel = StyleBoxFlat.new()
+	estilo_painel.bg_color = Color(0.05, 0.15, 0.05, 0.98)
+	estilo_painel.set_corner_radius_all(12)
+	estilo_painel.set_content_margin_all(35) 
+	estilo_painel.border_width_left = 3
+	estilo_painel.border_width_top = 3
+	estilo_painel.border_width_right = 3
+	estilo_painel.border_width_bottom = 3
+	estilo_painel.border_color = Color(0.2, 0.8, 0.2)
+	estilo_painel.shadow_color = Color(0, 0, 0, 0.6)
+	estilo_painel.shadow_size = 10
+	
+	panel_vitoria.add_theme_stylebox_override("panel", estilo_painel)
+	
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 18)
+	vbox.mouse_filter = Control.MOUSE_FILTER_PASS
+	panel_vitoria.add_child(vbox)
+	
+	# Título principal
+	var texto_titulo = Label.new()
+	texto_titulo.text = "VITÓRIA!"
+	texto_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto_titulo.add_theme_font_size_override("font_size", 30)
+	texto_titulo.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))
+	texto_titulo.mouse_filter = Control.MOUSE_FILTER_PASS
+	vbox.add_child(texto_titulo)
+	
+	# Subtítulo
+	var texto_sub = Label.new()
+	texto_sub.text = "O castelo está a salvo!"
+	texto_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto_sub.mouse_filter = Control.MOUSE_FILTER_PASS
+	vbox.add_child(texto_sub)
+	
+	var separador = HSeparator.new()
+	vbox.add_child(separador)
+	
+	# ----------------------------------------------------
+	# BOTÃO 1: JOGAR NOVAMENTE
+	# ----------------------------------------------------
+	var btn_jogar_novamente = Button.new()
+	btn_jogar_novamente.text = "Jogar Novamente"
+	btn_jogar_novamente.custom_minimum_size = Vector2(240, 45)
+	btn_jogar_novamente.mouse_filter = Control.MOUSE_FILTER_STOP 
+	
+	btn_jogar_novamente.pressed.connect(func():
+		get_tree().paused = false
+		if is_instance_valid(_camada_vitoria_instancia):
+			_camada_vitoria_instancia.queue_free()
+		get_tree().reload_current_scene()
+	)
+	vbox.add_child(btn_jogar_novamente)
+	
+	# ----------------------------------------------------
+	# BOTÃO 2: MENU PRINCIPAL
+	# ----------------------------------------------------
+	var btn_menu_principal = Button.new()
+	btn_menu_principal.text = "Menu Principal"
+	btn_menu_principal.custom_minimum_size = Vector2(240, 45)
+	btn_menu_principal.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	btn_menu_principal.pressed.connect(func():
+		get_tree().paused = false
+		if is_instance_valid(_camada_vitoria_instancia):
+			_camada_vitoria_instancia.queue_free()
+		
+		if self.has_method("_on_voltar_menu_pressionado"):
+			self.call("_on_voltar_menu_pressionado")
+		elif self.has_method("_on_botao_menu_principal_pressed"):
+			self.call("_on_botao_menu_principal_pressed")
+		else:
+			if ResourceLoader.exists("res://menu.tscn"):
+				get_tree().change_scene_to_file("res://menu.tscn")
+			elif ResourceLoader.exists("res://MenuPrincipal.tscn"):
+				get_tree().change_scene_to_file("res://MenuPrincipal.tscn")
+	)
+	vbox.add_child(btn_menu_principal)

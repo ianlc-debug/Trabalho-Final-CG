@@ -2,6 +2,7 @@ extends Node3D
 
 @export var velocidade: float = 5.0
 @export var vida_maxima: int = 100
+@export var eh_chefe: bool = false
 
 var vida_atual: int
 
@@ -59,8 +60,15 @@ func _process(delta):
 			print("Inimigo chegou na base!")
 			# Notificar o mapa sobre o dano
 			var mapa = seguidor.get_parent().get_parent()
+			
 			if mapa and mapa.has_method("registrar_dano_base"):
-				mapa.registrar_dano_base()
+				# --- CORREÇÃO AQUI (usando self.get) ---
+				if self.get("eh_chefe") == true:
+					mapa.registrar_dano_base(true) # O chefe acerta o golpe fatal!
+				else:
+					mapa.registrar_dano_base()     # O inimigo normal tira 1 de vida
+				# ---------------------------------------
+					
 			seguidor.queue_free()
 
 
