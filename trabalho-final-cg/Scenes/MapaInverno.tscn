@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bom0orf1eh5la"]
 
 [ext_resource type="MeshLibrary" uid="uid://cbcck2aox3ltk" path="res://Resources/Primavera.meshlib" id="1_jeaob"]
-[ext_resource type="Script" uid="uid://c8x08bumvd7h3" path="res://scripts/mapa_primavera.gd" id="1_wk4dq"]
+[ext_resource type="Script" uid="uid://dabealavc0vv5" path="res://scripts/mapa_inverno.gd" id="1_s0hs1"]
 [ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_af5w3"]
 [ext_resource type="Texture2D" uid="uid://do85i3217dq4d" path="res://Resources/ImagemCanhao.png" id="3_geoob"]
 [ext_resource type="Script" uid="uid://bbw7pdnojs4u5" path="res://scripts/gerenciador_ui.gd" id="4_7s6v2"]
@@ -90,7 +90,7 @@ size = Vector3(0.7862272, 0.5038452, 4.7182283)
 size = Vector3(7.373071, 32.89145, 7.5959997)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
-script = ExtResource("1_wk4dq")
+script = ExtResource("1_s0hs1")
 
 [node name="GridMapInverno" type="GridMap" parent="." unique_id=1788637306]
 mesh_library = ExtResource("1_jeaob")
