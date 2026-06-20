@@ -28,6 +28,8 @@ func _ready() -> void:
 	tela_fases.visible = false
 	tela_creditos.visible = false
 	
+	RenderingServer.set_default_clear_color(Color.BLACK)
+	
 	# Configurar cursor de mãozinha para os novos botões (se não fez no editor)
 	botao_voltar_creditos.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	
@@ -86,4 +88,3 @@ func _unhandled_input(event: InputEvent) -> void:
 			var novo_estado = not Salvamento.is_inverno_concluido()
 			Salvamento.salvar_inverno_concluido(novo_estado)
 			print("MENU DEBUG: Conclusao do Inverno alterada para: ", novo_estado)
-

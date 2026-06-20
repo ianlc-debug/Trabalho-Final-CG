@@ -103,7 +103,7 @@ func _ready() -> void:
 		if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
 			RenderingServer.set_default_clear_color(Color(0.88, 0.92, 0.95)) # Branco/neve azulado
 		else:
-			RenderingServer.set_default_clear_color(Color(0.35, 0.62, 0.42)) # Verde suave
+			RenderingServer.set_default_clear_color(Color(0.349, 0.62, 0.886, 1.0)) 
 			
 	_criar_fundo_loja()
 	_criar_labels()
@@ -239,12 +239,12 @@ func _adicionar_labels_custo() -> void:
 		btn.expand_icon = true
 		vbox.add_child(btn)
 		
-		# Criar overlay de cooldown estilo PVZ (sweep radial horário / clockwise)
+		# Criar overlay de cooldown estilo PVZ
 		var progress_overlay = TextureProgressBar.new()
 		progress_overlay.name = "CooldownOverlay"
 		progress_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		
-		# Adicionar ao botão antes de configurar layout de âncoras para que o parent esteja definido
+		# Adicionar ao botão ANTES de configurar layout de âncoras
 		btn.add_child(progress_overlay)
 		
 		# Forçar preenchimento do retângulo do botão via âncoras de forma robusta
@@ -259,8 +259,11 @@ func _adicionar_labels_custo() -> void:
 		
 		progress_overlay.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		progress_overlay.nine_patch_stretch = true
-		progress_overlay.custom_minimum_size = Vector2(64, 64)
-		progress_overlay.size = Vector2(64, 64)
+		
+		# --- CORREÇÃO AQUI: Removemos o custom_minimum_size e o .size manuais que brigavam com as âncoras ---
+		# Como o nine_patch_stretch está ativo e as âncoras estão em 1.0, o overlay já vai tomar 64x64 automaticamente.
+		# Caso a Godot ainda precise de um empurrão visual, usamos o set_deferred para não gerar o aviso:
+		progress_overlay.set_deferred("custom_minimum_size", Vector2(64, 64))
 		
 		# Criar textura branca 64x64 em tempo de execução
 		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)

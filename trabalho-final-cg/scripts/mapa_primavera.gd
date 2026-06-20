@@ -71,10 +71,15 @@ var jogo_perdido: bool = false
 
 @onready var ui_gerenciador = $UI
 
-func _ready():
+func _ready() -> void:
 	timer.timeout.connect(_on_spawn_timer_timeout)
-	# Começar no estado de espera
 	tempo_espera_restante = tempo_espera_total
+	
+	# Correção da barra inferior (que já deu certo)
+	call_deferred("_corrigir_barra_botoes_dinamicamente")
+	
+	# --- LINHA ADICIONADA: Organiza o HUD superior e configura o sistema de pausa ---
+	call_deferred("_reorganizar_hud_superior_e_pausa")
 
 
 func _process(delta: float) -> void:
@@ -260,3 +265,275 @@ func _verificar_salvamento_inverno() -> void:
 	var map_path = scene_file_path.to_lower()
 	if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
 		Salvamento.salvar_inverno_concluido(true)
+		
+func _corrigir_barra_botoes_dinamicamente() -> void:
+	if not is_instance_valid(ui_gerenciador):
+		return
+		
+	for filho in ui_gerenciador.get_children():
+		if filho is Control:
+			var nome = filho.name.to_lower()
+			
+			# Identifica o painel de compras
+			if "painel" in nome or "barra" in nome or "botoes" in nome or "container" in nome or filho is PanelContainer or filho is Panel:
+				
+				# 1. Encontra o container horizontal interno (onde os botões realmente estão)
+				var container_interno: Control = null
+				for sub_filho in filho.get_children():
+					if sub_filho is HBoxContainer or sub_filho is GridContainer:
+						container_interno = sub_filho
+						break
+				
+				if container_interno:
+					# Força o container de botões a se espremer ao mínimo possível
+					container_interno.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+					
+					# 2. Faz o painel de fundo copiar o tamanho exato mínimo dos botões (mais uma bordinha de respiro)
+					var tamanho_botoes = container_interno.get_combined_minimum_size()
+					filho.custom_minimum_size = Vector2(tamanho_botoes.x + 30, tamanho_botoes.y + 20)
+				
+				# Reseta e força a atualização do tamanho do painel
+				filho.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+				filho.reset_size()
+				
+				# 3. MATEMÁTICA DO CENTRO PERFEITO:
+				# Pega o tamanho atual da janela do jogo
+				var tamanho_tela = get_viewport().get_visible_rect().size
+				
+				# Posição X = (Metade da Tela) - (Metade da Largura da Barra) -> Centraliza perfeitamente
+				var centro_x = (tamanho_tela.x / 2.0) - (filho.size.x / 2.0)
+				
+				# Posição Y = Altura da Tela - Altura da Barra - 20 pixels de folga do chão
+				var chao_y = tamanho_tela.y - filho.size.y - 20.0
+				
+				# Aplica a posição calculada diretamente no objeto
+				filho.global_position = Vector2(centro_x, chao_y)
+				
+				print("Sucesso! A barra foi encolhida ao tamanho dos botões e perfeitamente centralizada.")
+				
+# Variável para controlar a existência do menu de pausa na tela
+var _menu_pausa_instancia: PanelContainer = null
+var _botao_pausa_ref: Button = null # <--- NOVA VARIÁVEL: Guarda o botão para atualizar o texto
+
+func _reorganizar_hud_superior_e_pausa() -> void:
+	var ui_alvo = null
+	if "ui_gerenciador" in self and is_instance_valid(get("ui_gerenciador")):
+		ui_alvo = get("ui_gerenciador")
+	elif has_node("UI"):
+		ui_alvo = get_node("UI")
+	elif has_node("GerenciadorUI"):
+		ui_alvo = get_node("GerenciadorUI")
+		
+	if not is_instance_valid(ui_alvo):
+		return
+		
+	await get_tree().create_timer(0.05).timeout
+	
+	var botao_pausa: Button = null
+	var botao_iniciar: Button = null
+	var labels_onda: Array[Label] = []
+	var painel_original: Control = null
+	
+	var nos_para_checar = [ui_alvo]
+	while nos_para_checar.size() > 0:
+		var atual = nos_para_checar.pop_front()
+		if atual is Button:
+			var txt = atual.text.to_lower()
+			var nom = atual.name.to_lower()
+			if "paus" in txt or "paus" in nom or "cont" in txt or "cont" in nom:
+				botao_pausa = atual
+			elif "onda" in txt or "onda" in nom or "ini" in txt or "ini" in nom:
+				botao_iniciar = atual
+		elif atual is Label:
+			var txt = atual.text.to_lower()
+			var nom = atual.name.to_lower()
+			if "onda" in txt or "onda" in nom or "próx" in txt or "prox" in txt or "tempo" in nom or "resta" in txt:
+				labels_onda.append(atual)
+		nos_para_checar.append_array(atual.get_children())
+		
+	if not botao_pausa:
+		return
+
+	# SALVA O BOTÃO NA NOSSA VARIÁVEL GLOBAL
+	_botao_pausa_ref = botao_pausa
+
+	var pai = botao_pausa.get_parent()
+	while pai and pai != ui_alvo:
+		if pai is PanelContainer or pai is Panel or "onda" in pai.name.to_lower():
+			painel_original = pai
+			break
+		pai = pai.get_parent()
+
+	if painel_original:
+		for filho in painel_original.get_children():
+			if filho is Label and not filho in labels_onda:
+				labels_onda.append(filho)
+
+	if botao_pausa and botao_pausa.get_parent():
+		botao_pausa.get_parent().remove_child(botao_pausa)
+	if botao_iniciar and botao_iniciar.get_parent():
+		botao_iniciar.get_parent().remove_child(botao_iniciar)
+	for lbl in labels_onda:
+		if lbl.get_parent():
+			lbl.get_parent().remove_child(lbl)
+			
+	if painel_original:
+		painel_original.visible = false
+		painel_original.process_mode = Node.PROCESS_MODE_DISABLED
+
+	var tamanho_tela = get_viewport().get_visible_rect().size
+
+	var novo_painel_centro = PanelContainer.new()
+	novo_painel_centro.name = "NovoPainelOndasCentro"
+	
+	var estilo_centro = StyleBoxFlat.new()
+	estilo_centro.bg_color = Color(0.12, 0.12, 0.14, 0.85)
+	estilo_centro.set_corner_radius_all(8)
+	estilo_centro.set_content_margin_all(10)
+	novo_painel_centro.add_theme_stylebox_override("panel", estilo_centro)
+	
+	var hbox_centro = HBoxContainer.new()
+	hbox_centro.add_theme_constant_override("separation", 20)
+	novo_painel_centro.add_child(hbox_centro)
+	
+	var vbox_labels = VBoxContainer.new()
+	vbox_labels.add_theme_constant_override("separation", 2)
+	hbox_centro.add_child(vbox_labels)
+	
+	for lbl in labels_onda:
+		vbox_labels.add_child(lbl)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		
+	if botao_iniciar:
+		hbox_centro.add_child(botao_iniciar)
+		botao_iniciar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		botao_iniciar.custom_minimum_size = Vector2(105, 35)
+
+	ui_alvo.add_child(novo_painel_centro)
+	novo_painel_centro.reset_size()
+	
+	var centro_x = (tamanho_tela.x / 2.0) - (novo_painel_centro.size.x / 2.0)
+	novo_painel_centro.global_position = Vector2(centro_x, 15)
+
+	var novo_painel_pausa = PanelContainer.new()
+	novo_painel_pausa.name = "NovoPainelPausaDireito"
+	novo_painel_pausa.process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	var estilo_pausa = StyleBoxFlat.new()
+	estilo_pausa.bg_color = Color(0.12, 0.12, 0.14, 0.85)
+	estilo_pausa.set_corner_radius_all(8)
+	estilo_pausa.set_content_margin_all(8)
+	novo_painel_pausa.add_theme_stylebox_override("panel", estilo_pausa)
+	
+	botao_pausa.process_mode = Node.PROCESS_MODE_ALWAYS
+	botao_pausa.custom_minimum_size = Vector2(80, 35)
+	novo_painel_pausa.add_child(botao_pausa)
+	
+	ui_alvo.add_child(novo_painel_pausa)
+	novo_painel_pausa.reset_size()
+	
+	var direita_x = tamanho_tela.x - novo_painel_pausa.size.x - 20
+	novo_painel_pausa.global_position = Vector2(direita_x, 15)
+
+	for conexao in botao_pausa.pressed.get_connections():
+		botao_pausa.pressed.disconnect(conexao.callable)
+	botao_pausa.pressed.connect(_on_botao_pausa_clicado)
+
+# --- SISTEMA DO MENU DE PAUSA CENTRALIZADO ---
+
+func _on_botao_pausa_clicado() -> void:
+	if is_instance_valid(_menu_pausa_instancia):
+		_alternar_pausa(false)
+	else:
+		_alternar_pausa(true)
+
+func _alternar_pausa(pausar: bool) -> void:
+	get_tree().paused = pausar
+	
+	# Sincroniza o texto E as cores do botão superior
+	if is_instance_valid(_botao_pausa_ref):
+		if pausar:
+			_botao_pausa_ref.text = "Continuar"
+			# Aplica a cor avermelhada no texto (ajuste o RGB se quiser outro tom)
+			_botao_pausa_ref.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4)) 
+		else:
+			_botao_pausa_ref.text = "Pausar"
+			# Remove a alteração de cor para voltar ao branco padrão do tema
+			_botao_pausa_ref.remove_theme_color_override("font_color")
+			
+	if pausar:
+		_criar_menu_pausa()
+	else:
+		if is_instance_valid(_menu_pausa_instancia):
+			_menu_pausa_instancia.queue_free()
+
+func _criar_menu_pausa() -> void:
+	_menu_pausa_instancia = PanelContainer.new()
+	_menu_pausa_instancia.process_mode = Node.PROCESS_MODE_ALWAYS
+	_menu_pausa_instancia.name = "MenuPausaCentralizado"
+	
+	var estilo_painel = StyleBoxFlat.new()
+	estilo_painel.bg_color = Color(0.12, 0.12, 0.14, 0.95)
+	estilo_painel.set_corner_radius_all(12)
+	estilo_painel.set_content_margin_all(25)
+	estilo_painel.border_width_left = 2
+	estilo_painel.border_width_top = 2
+	estilo_painel.border_width_right = 2
+	estilo_painel.border_width_bottom = 2
+	estilo_painel.border_color = Color(0.3, 0.3, 0.35)
+	_menu_pausa_instancia.add_theme_stylebox_override("panel", estilo_painel)
+	
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 12)
+	_menu_pausa_instancia.add_child(vbox)
+	
+	var texto_titulo = Label.new()
+	texto_titulo.text = "JOGO PAUSADO"
+	texto_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto_titulo.add_theme_font_size_override("font_size", 22)
+	texto_titulo.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
+	vbox.add_child(texto_titulo)
+	
+	var separador = HSeparator.new()
+	vbox.add_child(separador)
+	
+	var btn_continuar = Button.new()
+	btn_continuar.text = "Continuar Jogo"
+	btn_continuar.custom_minimum_size = Vector2(200, 38)
+	btn_continuar.pressed.connect(func(): _alternar_pausa(false))
+	vbox.add_child(btn_continuar)
+	
+	var btn_reiniciar = Button.new()
+	btn_reiniciar.text = "Reiniciar Fase"
+	btn_reiniciar.custom_minimum_size = Vector2(200, 38)
+	btn_reiniciar.pressed.connect(_on_reiniciar_fase_pressionado)
+	vbox.add_child(btn_reiniciar)
+	
+	var btn_menu_principal = Button.new()
+	btn_menu_principal.text = "Menu Principal"
+	btn_menu_principal.custom_minimum_size = Vector2(200, 38)
+	btn_menu_principal.pressed.connect(_on_voltar_menu_pressionado)
+	vbox.add_child(btn_menu_principal)
+	
+	var ui_alvo = null
+	if "ui_gerenciador" in self and is_instance_valid(get("ui_gerenciador")):
+		ui_alvo = get("ui_gerenciador")
+	elif has_node("UI"):
+		ui_alvo = get_node("UI")
+		
+	if ui_alvo:
+		ui_alvo.add_child(_menu_pausa_instancia)
+		_menu_pausa_instancia.reset_size()
+		var tamanho_tela = get_viewport().get_visible_rect().size
+		_menu_pausa_instancia.global_position = Vector2(
+			(tamanho_tela.x / 2.0) - (_menu_pausa_instancia.size.x / 2.0),
+			(tamanho_tela.y / 2.0) - (_menu_pausa_instancia.size.y / 2.0)
+		)
+
+func _on_reiniciar_fase_pressionado() -> void:
+	_alternar_pausa(false)
+	get_tree().reload_current_scene()
+
+func _on_voltar_menu_pressionado() -> void:
+	_alternar_pausa(false)
+	get_tree().change_scene_to_file("res://Scenes/menu_principal.tscn")
