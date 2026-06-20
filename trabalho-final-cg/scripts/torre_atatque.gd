@@ -189,31 +189,31 @@ func configurar_cor_alcance() -> void:
 					nova_mesh.height = alcance * 2.0
 				alcance_node.mesh = nova_mesh
 				
-			# Obter o material
-			var mat = alcance_node.material_override
-			if not mat:
-				mat = alcance_node.get_active_material(0)
-			if not mat and alcance_node.mesh and "material" in alcance_node.mesh:
-				mat = alcance_node.mesh.material
-				
-			if mat:
-				var novo_mat = mat.duplicate() as StandardMaterial3D
-				if novo_mat:
-					var map_name = ""
-					var map_path = ""
-					if is_inside_tree() and get_tree().current_scene:
-						map_name = get_tree().current_scene.name.to_lower()
-						map_path = get_tree().current_scene.scene_file_path.to_lower()
+			var map_name = ""
+			var map_path = ""
+			if is_inside_tree() and get_tree().current_scene:
+				map_name = get_tree().current_scene.name.to_lower()
+				map_path = get_tree().current_scene.scene_file_path.to_lower()
+			
+			if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+				# Obter o material
+				var mat = alcance_node.material_override
+				if not mat:
+					mat = alcance_node.get_active_material(0)
+				if not mat and alcance_node.mesh and "material" in alcance_node.mesh:
+					mat = alcance_node.mesh.material
 					
-					if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
+				if mat:
+					var novo_mat = mat.duplicate() as StandardMaterial3D
+					if novo_mat:
 						# Dourado/âmbar suave para o mapa de inverno (contrasta com a neve branca)
 						novo_mat.albedo_color = Color(0.95, 0.6, 0.1, 0.18)
-					else:
-						# Ciano suave para o mapa de primavera
-						novo_mat.albedo_color = Color(0.1, 0.65, 0.9, 0.15)
-					
-					# Estilo premium: translúcido e sem sombreamento para parecer um holograma UI limpo
-					novo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-					novo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-					
-					alcance_node.material_override = novo_mat
+						
+						# Estilo premium: translúcido e sem sombreamento para parecer um holograma UI limpo
+						novo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+						novo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+						
+						alcance_node.material_override = novo_mat
+			else:
+				# Mantém o material original (sem override) em outros mapas
+				alcance_node.material_override = null

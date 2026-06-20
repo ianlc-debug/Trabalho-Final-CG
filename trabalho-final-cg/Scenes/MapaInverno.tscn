@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://dhijxvdpqd6sb" path="res://Scenes/cena_balista.tscn" id="6_1mkd7"]
 [ext_resource type="Texture2D" uid="uid://befpiwsxdarns" path="res://Resources/ImagemMina.png" id="6_7s6v2"]
 [ext_resource type="PackedScene" uid="uid://dwouk4e0i6upw" path="res://Scenes/cena_catapulta.tscn" id="7_r37jk"]
+[ext_resource type="PackedScene" uid="uid://dxib752ddt66d" path="res://Scenes/mina_ouro.tscn" id="8_r37jk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
 size = Vector3(151.79004, 91.0758, 115.98511)
@@ -139,7 +140,7 @@ script = ExtResource("4_7s6v2")
 cena_canhao = ExtResource("5_s0hs1")
 cena_balista = ExtResource("6_1mkd7")
 cena_catapulta = ExtResource("7_r37jk")
-cena_mina = ExtResource("7_r37jk")
+cena_mina = ExtResource("8_r37jk")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI" unique_id=796105874]
 anchors_preset = 7
