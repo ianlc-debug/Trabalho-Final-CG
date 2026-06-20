@@ -255,9 +255,7 @@ func _disparar_derrota() -> void:
 	for inimigo in get_tree().get_nodes_in_group("inimigos"):
 		if is_instance_valid(inimigo):
 			inimigo.set("velocidade", 0.0)
-			
-	if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
-		ui_gerenciador._mostrar_mensagem("Fim de Jogo! Você foi derrotado.")
+	_exibir_tela_game_over()
 
 
 func _verificar_salvamento_inverno() -> void:
@@ -537,3 +535,100 @@ func _on_reiniciar_fase_pressionado() -> void:
 func _on_voltar_menu_pressionado() -> void:
 	_alternar_pausa(false)
 	get_tree().change_scene_to_file("res://Scenes/menu_principal.tscn")
+
+# Variável para guardar o nosso novo painel de derrota
+var _menu_game_over_instancia: PanelContainer = null
+
+func _exibir_tela_game_over() -> void:
+	# Pausa o jogo instantaneamente
+	get_tree().paused = true
+	
+	var ui_alvo = null
+	if "ui_gerenciador" in self and is_instance_valid(get("ui_gerenciador")):
+		ui_alvo = get("ui_gerenciador")
+	elif has_node("UI"):
+		ui_alvo = get_node("UI")
+	elif has_node("GerenciadorUI"):
+		ui_alvo = get_node("GerenciadorUI")
+	else:
+		ui_alvo = self
+		
+	# 1. VARREDURA PARA ESCONDER O MENU VELHO
+	# Isso garante que a janelinha feia lá de baixo desapareça da tela
+	if is_instance_valid(ui_alvo):
+		var nos = [ui_alvo]
+		while nos.size() > 0:
+			var atual = nos.pop_front()
+			if atual is Control and atual.visible:
+				for filho in atual.get_children():
+					if filho is Label and ("fim de jogo" in filho.text.to_lower() or "destruída" in filho.text.to_lower()):
+						# Encontramos o texto do menu velho, vamos esconder o painel inteiro
+						var pai = filho.get_parent()
+						while pai and pai != ui_alvo:
+							if pai is PanelContainer or pai is Panel or pai is ColorRect:
+								pai.visible = false
+								break
+							pai = pai.get_parent()
+			nos.append_array(atual.get_children())
+
+	# 2. CRIAÇÃO DO NOVO MENU DE GAME OVER CENTRALIZADO
+	_menu_game_over_instancia = PanelContainer.new()
+	_menu_game_over_instancia.process_mode = Node.PROCESS_MODE_ALWAYS
+	_menu_game_over_instancia.name = "MenuGameOverCentralizado"
+	
+	# Estilo visual de derrota (Fundo escuro com bordas vermelhas)
+	var estilo_painel = StyleBoxFlat.new()
+	estilo_painel.bg_color = Color(0.15, 0.05, 0.05, 0.95)
+	estilo_painel.set_corner_radius_all(12)
+	estilo_painel.set_content_margin_all(30)
+	estilo_painel.border_width_left = 3
+	estilo_painel.border_width_top = 3
+	estilo_painel.border_width_right = 3
+	estilo_painel.border_width_bottom = 3
+	estilo_painel.border_color = Color(0.8, 0.2, 0.2) # Vermelho alerta
+	_menu_game_over_instancia.add_theme_stylebox_override("panel", estilo_painel)
+	
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 15)
+	_menu_game_over_instancia.add_child(vbox)
+	
+	# Título principal
+	var texto_titulo = Label.new()
+	texto_titulo.text = "FIM DE JOGO"
+	texto_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto_titulo.add_theme_font_size_override("font_size", 28)
+	texto_titulo.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))
+	vbox.add_child(texto_titulo)
+	
+	# Subtítulo
+	var texto_sub = Label.new()
+	texto_sub.text = "Sua base foi destruída!"
+	texto_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(texto_sub)
+	
+	var separador = HSeparator.new()
+	vbox.add_child(separador)
+	
+	# Botão 1: Jogar Novamente (Reaproveita a função do Pause!)
+	var btn_jogar_novamente = Button.new()
+	btn_jogar_novamente.text = "Jogar Novamente"
+	btn_jogar_novamente.custom_minimum_size = Vector2(220, 42)
+	btn_jogar_novamente.pressed.connect(_on_reiniciar_fase_pressionado)
+	vbox.add_child(btn_jogar_novamente)
+	
+	# Botão 2: Menu Principal (Reaproveita a função do Pause!)
+	var btn_menu_principal = Button.new()
+	btn_menu_principal.text = "Menu Principal"
+	btn_menu_principal.custom_minimum_size = Vector2(220, 42)
+	btn_menu_principal.pressed.connect(_on_voltar_menu_pressionado)
+	vbox.add_child(btn_menu_principal)
+	
+	# Adiciona à tela e calcula o centro exato
+	if ui_alvo:
+		ui_alvo.add_child(_menu_game_over_instancia)
+		_menu_game_over_instancia.reset_size()
+		var tamanho_tela = get_viewport().get_visible_rect().size
+		_menu_game_over_instancia.global_position = Vector2(
+			(tamanho_tela.x / 2.0) - (_menu_game_over_instancia.size.x / 2.0),
+			(tamanho_tela.y / 2.0) - (_menu_game_over_instancia.size.y / 2.0)
+		)

@@ -390,7 +390,10 @@ func _criar_ui_melhorias() -> void:
 # --- ADICIONADO: UI de Derrota (Game Over) ---
 func _criar_ui_derrota() -> void:
 	painel_derrota = PanelContainer.new()
-	add_child(painel_derrota)
+	
+	# MUDANÇA AQUI: Comentamos esta linha para que o menu velho não seja jogado na tela!
+	# add_child(painel_derrota)
+	
 	painel_derrota.visible = false
 	
 	var style = StyleBoxFlat.new()
