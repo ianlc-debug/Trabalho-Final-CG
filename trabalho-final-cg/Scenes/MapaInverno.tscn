@@ -1,11 +1,16 @@
 [gd_scene format=3 uid="uid://bom0orf1eh5la"]
 
 [ext_resource type="MeshLibrary" uid="uid://cbcck2aox3ltk" path="res://Resources/Primavera.meshlib" id="1_jeaob"]
+[ext_resource type="Script" uid="uid://c8x08bumvd7h3" path="res://scripts/mapa_primavera.gd" id="1_wk4dq"]
 [ext_resource type="PackedScene" uid="uid://c8hy4vl70s3e" path="res://assets/Castle/CastleModel.glb" id="2_af5w3"]
 [ext_resource type="Texture2D" uid="uid://do85i3217dq4d" path="res://Resources/ImagemCanhao.png" id="3_geoob"]
+[ext_resource type="Script" uid="uid://bbw7pdnojs4u5" path="res://scripts/gerenciador_ui.gd" id="4_7s6v2"]
 [ext_resource type="Texture2D" uid="uid://cn2cn2uklygpc" path="res://Resources/ImagemBalista.png" id="4_cu88n"]
+[ext_resource type="PackedScene" uid="uid://epjm2kpwtoer" path="res://Scenes/cena_canhao.tscn" id="5_s0hs1"]
 [ext_resource type="Texture2D" uid="uid://b6248q8m31jo7" path="res://Resources/ImagemCatapulta.png" id="5_wk4dq"]
+[ext_resource type="PackedScene" uid="uid://dhijxvdpqd6sb" path="res://Scenes/cena_balista.tscn" id="6_1mkd7"]
 [ext_resource type="Texture2D" uid="uid://befpiwsxdarns" path="res://Resources/ImagemMina.png" id="6_7s6v2"]
+[ext_resource type="PackedScene" uid="uid://dwouk4e0i6upw" path="res://Scenes/cena_catapulta.tscn" id="7_r37jk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
 size = Vector3(151.79004, 91.0758, 115.98511)
@@ -85,6 +90,7 @@ size = Vector3(0.7862272, 0.5038452, 4.7182283)
 size = Vector3(7.373071, 32.89145, 7.5959997)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
+script = ExtResource("1_wk4dq")
 
 [node name="GridMapInverno" type="GridMap" parent="." unique_id=1788637306]
 mesh_library = ExtResource("1_jeaob")
@@ -129,6 +135,11 @@ curve = SubResource("Curve3D_af5w3")
 [node name="SpawnTimer" type="Timer" parent="." unique_id=1925429088]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=49212098]
+script = ExtResource("4_7s6v2")
+cena_canhao = ExtResource("5_s0hs1")
+cena_balista = ExtResource("6_1mkd7")
+cena_catapulta = ExtResource("7_r37jk")
+cena_mina = ExtResource("7_r37jk")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI" unique_id=796105874]
 anchors_preset = 7
