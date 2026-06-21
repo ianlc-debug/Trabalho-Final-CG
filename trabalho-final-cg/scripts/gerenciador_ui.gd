@@ -10,7 +10,7 @@ extends CanvasLayer
 var cena_gelo: PackedScene = preload("res://Scenes/cena_gelo.tscn")
 
 # --- Sistema de economia e validação ---
-@export var ouro_inicial: int = 300
+@export var ouro_inicial: int = 400
 @export var custo_canhao: int = 100
 @export var custo_balista: int = 75
 @export var custo_catapulta: int = 150

@@ -12,44 +12,45 @@ extends Node3D
 # Configurações de ondas
 var configuracao_ondas = [
 	{
-		"inimigos": [{"tipo": "basico", "quantidade": 5}],
-		"intervalo": 3.0,
-		"recompensa": 100
+		"inimigos": [{"tipo": "basico", "quantidade": 10}],
+		"intervalo": 1.0,
+		"recompensa": 400
 	},
 	{
 		"inimigos": [
-			{"tipo": "basico", "quantidade": 6},
-			{"tipo": "rapido", "quantidade": 3}
+			{"tipo": "basico", "quantidade": 15},
+			{"tipo": "rapido", "quantidade": 10}
 		],
-		"intervalo": 2.5,
-		"recompensa": 120
+		"intervalo": 0.9,
+		"recompensa": 400
 	},
 	{
 		"inimigos": [
-			{"tipo": "basico", "quantidade": 6},
-			{"tipo": "rapido", "quantidade": 5},
-			{"tipo": "forte", "quantidade": 2}
+			{"tipo": "basico", "quantidade": 20},
+			{"tipo": "rapido", "quantidade": 15},
+			{"tipo": "forte", "quantidade": 5}
 		],
-		"intervalo": 2.0,
-		"recompensa": 150
+		"intervalo": 0.8,
+		"recompensa": 400
 	},
 	{
 		"inimigos": [
-			{"tipo": "basico", "quantidade": 8},
-			{"tipo": "rapido", "quantidade": 8},
-			{"tipo": "forte", "quantidade": 4}
+			{"tipo": "basico", "quantidade": 25},
+			{"tipo": "rapido", "quantidade": 20},
+			{"tipo": "forte", "quantidade": 10}
 		],
-		"intervalo": 1.6,
-		"recompensa": 200
+		"intervalo": 0.7,
+		"recompensa": 400
 	},
 	{
 		"inimigos": [
+			{"tipo": "basico", "quantidade": 30},
 			{"tipo": "boss", "quantidade": 1},
-			{"tipo": "forte", "quantidade": 5},
-			{"tipo": "rapido", "quantidade": 6}
+			{"tipo": "forte", "quantidade": 15},
+			{"tipo": "rapido", "quantidade": 25}
 		],
-		"intervalo": 1.4,
-		"recompensa": 350
+		"intervalo": 0.5,
+		"recompensa": 400
 	}
 ]
 
@@ -66,7 +67,7 @@ var jogo_vencido: bool = false:
 		jogo_vencido = valor
 		if jogo_vencido:
 			_verificar_salvamento_inverno()
-var base_health: int = 20
+var base_health: int = 5
 var jogo_perdido: bool = false
 
 @onready var ui_gerenciador = $UI
@@ -203,7 +204,7 @@ func _atualizar_inimigos_vivos() -> void:
 		# Procura o nó da UI e chama o método "adicionar_ouro" que está no seu gerenciador_ui.gd
 		var gerenciador_ui = get_node_or_null("UI") # Ajuste o caminho se a UI não estiver direto na raiz do mapa
 		if gerenciador_ui and gerenciador_ui.has_method("adicionar_ouro"):
-			gerenciador_ui.adicionar_ouro(100) # <- Mude 100 para o valor de bônus que você preferir!
+			gerenciador_ui.adicionar_ouro(400) # <- Mude 100 para o valor de bônus que você preferir!
 
 		# Verifica se ainda existem mais ondas configuradas
 		if onda_atual + 1 < configuracao_ondas.size():
