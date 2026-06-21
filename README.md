@@ -2,87 +2,137 @@
 
 ## Sobre o Jogo
 
-**Castelo vs OVNIs** é um jogo do gênero **Tower Defense** desenvolvido na Godot Engine. O jogador assume a missão de proteger seu castelo contra uma invasão de OVNIs que avançam em ondas sucessivas por diferentes cenários.
+**Castelo vs OVNIs** é um jogo do gênero **Tower Defense** desenvolvido utilizando a **Godot Engine**. O jogador deve defender seu castelo contra uma invasão de OVNIs que avançam em ondas sucessivas através de dois cenários temáticos: **Primavera** e **Inverno**.
 
-O jogo possui duas fases temáticas:
-
-* 🌸 Primavera
-* ❄️ Inverno
-
-Em cada fase, o jogador deve sobreviver a 5 ondas de inimigos, utilizando suas construções defensivas de forma estratégica para impedir que os OVNIs alcancem o castelo.
+Ao longo da partida, o jogador precisa construir e aprimorar estruturas defensivas para impedir que os inimigos alcancem a base. A estratégia de posicionamento, gerenciamento de recursos e evolução das construções é essencial para sobreviver às ondas e derrotar o chefe de cada fase.
 
 ---
 
 ## Objetivo
 
-O objetivo do jogador é defender o castelo durante todas as ondas de ataque presentes em cada mapa.
+O objetivo do jogo é proteger o castelo contra as ondas de OVNIs e sobreviver até o final de cada fase.
 
-O jogador vence ao resistir às 5 ondas de inimigos e derrotar o chefe da fase.
+O jogador vence ao:
+
+* Resistir às 5 ondas de inimigos presentes no mapa;
+* Derrotar o inimigo chefe da fase.
 
 O jogador perde caso:
 
 * A vida do castelo seja reduzida a zero;
-* O chefe consiga alcançar a base do jogador.
+* O chefe alcance a base do jogador.
 
 ---
 
-## Mecânicas do Jogo
+## Fases
 
-Durante a partida, o jogador pode construir estruturas defensivas e econômicas para fortalecer sua defesa.
+O jogo possui dois mapas jogáveis:
 
-Cada estrutura possui características próprias, como **dano**, **alcance** e **função estratégica**, exigindo que o jogador escolha cuidadosamente onde e quando posicioná-las.
+### 🌸 Primavera
 
-Além disso, as construções podem ser **evoluídas utilizando ouro**, aumentando sua eficiência ao longo da partida.
+Primeira fase do jogo, onde o jogador enfrenta as primeiras ondas de OVNIs e aprende as mecânicas básicas de construção, evolução e gerenciamento de recursos.
 
-### Sistema de Ouro
+### ❄️ Inverno
 
-O ouro é um recurso essencial para o progresso do jogador. Ele pode ser utilizado para:
+Segunda fase do jogo, apresentando um desafio maior e exigindo estratégias mais eficientes para lidar com os inimigos.
+
+Cada fase possui:
+
+* 5 ondas de inimigos;
+* Diferentes tipos de OVNIs;
+* Um chefe na onda final.
+
+---
+
+## Construções
+
+O jogador possui quatro tipos de construções disponíveis para defender o castelo.
+
+### 🔫 Canhão
+
+Estrutura ofensiva com alto dano e alcance médio.
+
+**Características:**
+
+* Alto dano;
+* Alcance médio;
+* Eficiente contra inimigos resistentes.
+
+### 🏹 Balista
+
+Estrutura de longo alcance que permite atacar inimigos antes que eles se aproximem da base.
+
+**Características:**
+
+* Longo alcance;
+* Boa precisão;
+* Excelente para eliminar inimigos à distância.
+
+### 💣 Catapulta
+
+Estrutura capaz de causar dano em área, sendo especialmente útil contra grupos de inimigos.
+
+**Características:**
+
+* Dano em área;
+* Boa cobertura de terreno;
+* Eficiente contra grandes quantidades de inimigos.
+
+### ⛏️ Mina de Ouro
+
+Construção responsável pela geração de ouro ao longo da partida.
+
+**Características:**
+
+* Produção contínua de ouro;
+* Pode ser evoluída para aumentar a geração de recursos.
+
+---
+
+## Sistema de Ouro
+
+O ouro é o principal recurso do jogo e pode ser utilizado para:
 
 * Construir novas estruturas;
 * Evoluir torres defensivas;
 * Evoluir minas de ouro;
-* Fortalecer a defesa do castelo ao longo das ondas.
+* Fortalecer a defesa do castelo ao longo da partida.
 
----
-
-## Construções Disponíveis
-
-### 🔫 Canhão
-
-Torre de dano elevado e alcance médio, ideal para causar grandes quantidades de dano em inimigos individuais.
-
-### 🏹 Balista
-
-Possui longo alcance e boa precisão, sendo eficiente para atacar inimigos antes que se aproximem da base.
-
-### 💣 Catapulta
-
-Estrutura capaz de causar dano em área, tornando-se eficaz contra grupos de inimigos.
-
-### ⛏️ Mina de Ouro
-
-Responsável pela geração de ouro durante a partida. Pode ser evoluída para aumentar a produção de recursos e acelerar o desenvolvimento da defesa.
+O gerenciamento eficiente do ouro é fundamental para o sucesso do jogador.
 
 ---
 
 ## Sistema de Evolução
 
-Todas as estruturas do jogo podem ser aprimoradas através do uso de ouro.
+Todas as construções podem ser aprimoradas utilizando ouro.
 
-Ao evoluir uma construção, o jogador obtém vantagens como:
+Ao evoluir uma estrutura, seus atributos são melhorados, permitindo que ela se torne mais eficiente durante as ondas mais difíceis.
 
-* Maior dano;
-* Maior alcance;
-* Melhor desempenho geral;
-* Aumento da produção de ouro (no caso das minas).
+As melhorias podem incluir:
 
-Esse sistema permite adaptar a estratégia conforme a dificuldade crescente das ondas.
+* Aumento de dano;
+* Aumento de alcance;
+* Maior eficiência geral;
+* Maior produção de ouro (para as minas).
+
+---
+
+## Sistema de Venda
+
+O jogador também pode vender qualquer construção já posicionada no mapa.
+
+Podem ser vendidas:
+
+* Torres defensivas;
+* Minas de ouro.
+
+Essa funcionalidade permite reorganizar a estratégia ao longo da partida e adaptar a defesa conforme as necessidades de cada onda.
 
 ---
 
 ## Inimigos
 
-O jogador enfrentará quatro tipos de OVNIs durante a partida.
+Durante as fases, o jogador enfrentará quatro tipos diferentes de OVNIs.
 
 ### 👽 OVNI Normal
 
@@ -90,27 +140,37 @@ Inimigo padrão com atributos equilibrados.
 
 ### ⚡ OVNI Rápido
 
-Possui grande velocidade de movimentação, tornando-se uma ameaça difícil de interceptar.
+Possui alta velocidade de movimentação, tornando-se uma ameaça difícil de interceptar.
 
 ### 🛡️ OVNI Tank
 
-Inimigo resistente com alta quantidade de vida, exigindo maior poder de fogo para ser derrotado.
+Inimigo com grande quantidade de vida e alta resistência.
 
 ### 👑 OVNI Chefe (Boss)
 
-O inimigo mais poderoso do jogo. Apresenta atributos superiores aos demais e representa o maior desafio de cada fase. Caso alcance a base do jogador, a partida é encerrada com derrota imediata.
+O inimigo mais poderoso do jogo.
+
+Possui atributos superiores aos demais inimigos e representa o maior desafio da fase.
+
+Caso alcance a base do jogador, a partida termina imediatamente com derrota.
 
 ---
 
-## Fases
+## Controles
 
-### 🌸 Primavera
+O jogo utiliza exclusivamente o **mouse** para todas as interações.
 
-Primeira fase do jogo, introduzindo as mecânicas básicas e os diferentes tipos de construções.
+Com ele, o jogador pode:
 
-### ❄️ Inverno
+* Construir estruturas;
+* Selecionar construções;
+* Evoluir torres;
+* Evoluir minas de ouro;
+* Vender construções;
+* Navegar pelos menus;
+* Interagir com toda a interface do jogo.
 
-Segunda fase do jogo, com dificuldade ampliada e desafios mais complexos para o jogador.
+Não é necessário utilizar o teclado durante a jogabilidade.
 
 ---
 
@@ -121,13 +181,13 @@ Segunda fase do jogo, com dificuldade ampliada e desafios mais complexos para o 
 
 ---
 
-## Como Executar
+## Como Executar o Projeto
 
 ### Pré-requisitos
 
-* Godot Engine instalada
+* Godot Engine instalada.
 
-### Passos
+### Passos para execução
 
 1. Clone o repositório:
 
@@ -137,31 +197,54 @@ git clone https://github.com/seu-usuario/castelo-vs-ovnis.git
 
 2. Abra a Godot Engine.
 
-3. Importe o arquivo `project.godot`.
+3. Clique em **Import**.
 
-4. Execute o projeto pressionando **F5**.
+4. Selecione o arquivo `project.godot`.
+
+5. Execute o projeto pressionando **F5** ou clicando em **Run Project**.
 
 ---
 
 ## Condições de Vitória
 
-* Sobreviver às 5 ondas de inimigos da fase.
-* Impedir que os inimigos destruam o castelo.
+* Sobreviver às 5 ondas de cada fase;
+* Impedir que os inimigos destruam o castelo;
 * Derrotar o chefe da fase.
+
+---
 
 ## Condições de Derrota
 
-* A vida do castelo chegar a zero.
+* A vida do castelo chegar a zero;
 * O chefe alcançar a base do jogador.
 
 ---
 
-## Equipe
+## Estrutura do Projeto
 
-* Nome dos integrantes
+```text
+CasteloVsOvnis/
+├── assets/
+│   ├── sprites/
+│   ├── audio/
+│   └── fonts/
+├── scenes/
+├── scripts/
+├── ui/
+├── maps/
+└── project.godot
+```
+
+---
+
+## Desenvolvedores
+
+* Nome do Integrante 1
+* Nome do Integrante 2
+* Nome do Integrante 3
 
 ---
 
 ## Licença
 
-Projeto desenvolvido para fins acadêmicos e educacionais.
+Este projeto foi desenvolvido para fins acadêmicos e educacionais.
