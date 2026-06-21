@@ -31,7 +31,7 @@ _data = {
 point_count = 8
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_unaey"]
-size = Vector3(39.975716, 1.1893921, 23.952087)
+size = Vector3(39.975716, 0.1680603, 23.952087)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_84pnl"]
 size = Vector3(7.7803955, 0.5038452, 0.81225586)
@@ -88,7 +88,7 @@ size = Vector3(8.775579, 0.5038452, 0.75896597)
 size = Vector3(0.7862272, 0.5038452, 4.7182283)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tsuef"]
-size = Vector3(7.373071, 32.89145, 7.5959997)
+size = Vector3(7.8598757, 32.89145, 7.5959997)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
 script = ExtResource("1_alwm1")
@@ -173,7 +173,7 @@ icon = ExtResource("12_23i5f")
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1513636654]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=980139370]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0020638, 0.094696045, -1.9758606)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0020638, 0.60536194, -1.9758606)
 shape = SubResource("BoxShape3D_unaey")
 
 [node name="BloqueioEstrada" type="Area3D" parent="." unique_id=435397462 groups=["area_proibida"]]
@@ -251,5 +251,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.49843, 0.45518267, -1.4791
 shape = SubResource("BoxShape3D_0nuux")
 
 [node name="CollisionShape3D19" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=667282340]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.258255, 16.966087, 5.336677)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.014853, 16.966087, 5.336677)
 shape = SubResource("BoxShape3D_tsuef")

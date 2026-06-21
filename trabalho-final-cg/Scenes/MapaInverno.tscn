@@ -14,7 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://dxib752ddt66d" path="res://Scenes/mina_ouro.tscn" id="8_r37jk"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_h2yge"]
-size = Vector3(151.79004, 91.0758, 115.98511)
+size = Vector3(122.588745, 91.0758, 115.98511)
 
 [sub_resource type="Curve3D" id="Curve3D_jeaob"]
 _data = {
@@ -88,7 +88,7 @@ size = Vector3(8.775579, 0.5038452, 0.75896597)
 size = Vector3(0.7862272, 0.5038452, 4.7182283)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_bj522"]
-size = Vector3(7.373071, 32.89145, 7.5959997)
+size = Vector3(7.373071, 32.89145, 17.80732)
 
 [node name="Map" type="Node3D" unique_id=1143051120]
 script = ExtResource("1_s0hs1")
@@ -106,7 +106,7 @@ transform = Transform3D(-0.0045198253, 0, -0.0637254, 0, 0.06388549, 0, 0.063725
 [node name="StaticBody3D" type="StaticBody3D" parent="GridMapInverno/Castle" unique_id=24679765]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GridMapInverno/Castle/StaticBody3D" unique_id=964462785]
-transform = Transform3D(1, 0, -2.2351742e-08, 0, 1.000001, 0, 2.2351742e-08, 0, 1, 9.518997, 45.24909, -12.139404)
+transform = Transform3D(1, 0, -2.2351742e-08, 0, 1.000001, 0, 2.2351742e-08, 0, 1, -5.0816727, 45.24911, -12.139404)
 shape = SubResource("BoxShape3D_h2yge")
 
 [node name="Camera3D2" type="Camera3D" parent="GridMapInverno" unique_id=1053843320]
@@ -251,5 +251,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.49843, 0.45518267, -1.4791
 shape = SubResource("BoxShape3D_gnmw6")
 
 [node name="CollisionShape3D19" type="CollisionShape3D" parent="BloqueioEstrada" unique_id=1990704759]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.258255, 16.966087, 5.336677)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.258255, 16.966087, 10.442337)
 shape = SubResource("BoxShape3D_bj522")
