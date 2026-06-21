@@ -1148,12 +1148,15 @@ func _on_botao_upgrade_gelo_pressed() -> void:
 	var pos_torre = construcao_selecionada.global_position
 	var rot_torre = construcao_selecionada.global_rotation
 	
-	# Criação da nova torre de gelo
+# Criação da nova torre de gelo
 	var nova_torre = cena_gelo.instantiate()
+	
+	# 1. PRIMEIRO: Coloque a torre no mundo do jogo!
+	mapa_3d.add_child(nova_torre)
+	
+	# 2. DEPOIS: Agora que ela existe no mundo, podemos dar a posição global
 	nova_torre.global_position = pos_torre
 	nova_torre.global_rotation = rot_torre
-	
-	mapa_3d.add_child(nova_torre)
 	
 	if nova_torre.has_method("ativar_torre"):
 		nova_torre.ativar_torre()

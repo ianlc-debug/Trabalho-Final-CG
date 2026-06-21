@@ -181,39 +181,37 @@ func configurar_cor_alcance() -> void:
 	if has_node("Alcance"):
 		var alcance_node = get_node("Alcance") as MeshInstance3D
 		if alcance_node:
-			# Duplicar a mesh para evitar alterar o recurso compartilhado e atualizar o tamanho
-			if alcance_node.mesh:
-				var nova_mesh = alcance_node.mesh.duplicate()
-				if nova_mesh is SphereMesh:
-					nova_mesh.radius = alcance
-					nova_mesh.height = alcance * 2.0
-				alcance_node.mesh = nova_mesh
+			# 1. GEOMETRIA: Criar o Disco com Altura 1 (Cilindro)
+			var novo_disco = CylinderMesh.new()
+			novo_disco.top_radius = alcance
+			novo_disco.bottom_radius = alcance
+			novo_disco.height = 1.0
+			alcance_node.mesh = novo_disco
+			
+			# Ajuste de posição para a base do disco ficar no chão
+			alcance_node.position.y = 0.5
 				
+			# 2. DETECTAR O MAPA
 			var map_name = ""
 			var map_path = ""
 			if is_inside_tree() and get_tree().current_scene:
 				map_name = get_tree().current_scene.name.to_lower()
 				map_path = get_tree().current_scene.scene_file_path.to_lower()
 			
-			if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
-				# Obter o material
-				var mat = alcance_node.material_override
-				if not mat:
-					mat = alcance_node.get_active_material(0)
-				if not mat and alcance_node.mesh and "material" in alcance_node.mesh:
-					mat = alcance_node.mesh.material
-					
-				if mat:
-					var novo_mat = mat.duplicate() as StandardMaterial3D
-					if novo_mat:
-						# Dourado/âmbar suave para o mapa de inverno (contrasta com a neve branca)
-						novo_mat.albedo_color = Color(0.95, 0.6, 0.1, 0.18)
-						
-						# Estilo premium: translúcido e sem sombreamento para parecer um holograma UI limpo
-						novo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-						novo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-						
-						alcance_node.material_override = novo_mat
+			var eh_mapa_inverno = "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path
+
+			# 3. MATERIAL: Criar um material NOVO e FORÇAR TRANSPARÊNCIA
+			var novo_mat = StandardMaterial3D.new()
+			novo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			novo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			
+			# 4. DEFINIR A COR BASEADA NO MAPA
+			if eh_mapa_inverno:
+				# Dourado/âmbar suave para o mapa de inverno
+				novo_mat.albedo_color = Color(0.95, 0.6, 0.1, 0.15) 
 			else:
-				# Mantém o material original (sem override) em outros mapas
-				alcance_node.material_override = null
+				# COR DO MAPA PRIMAVERA (Hexadecimal ffffff8b)
+				novo_mat.albedo_color = Color("ffffff8b")
+
+			# Aplica o material transparente na torre
+			alcance_node.material_override = novo_mat

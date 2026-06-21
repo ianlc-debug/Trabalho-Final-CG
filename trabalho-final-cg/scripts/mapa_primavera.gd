@@ -12,7 +12,7 @@ extends Node3D
 # Configurações de ondas
 var configuracao_ondas = [
 	{
-		"inimigos": [{"tipo": "basico", "quantidade": 5}],
+		"inimigos": [{"tipo": "basico", "quantidade": 10}],
 		"intervalo": 3.0,
 		"recompensa": 100
 	},
