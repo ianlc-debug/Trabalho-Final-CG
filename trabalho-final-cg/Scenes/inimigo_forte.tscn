@@ -1,10 +1,7 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://btfs0v54jwmba"]
 
-[ext_resource type="PackedScene" uid="uid://iljuk5xne3pn" path="res://assets/enemy-ufo-d.glb" id="1_bodl0"]
 [ext_resource type="Script" uid="uid://bk6ncqrjxuel2" path="res://scripts/inimigo_basico.gd" id="1_farlq"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
-size = Vector3(1.5, 1.0, 1.5)
+[ext_resource type="PackedScene" uid="uid://c05r7awrel7db" path="res://assets/enemy-ufo-a.glb" id="2_ia6sf"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_farlq"]
 viewport_path = NodePath("BarraVida3D/SubViewport")
@@ -15,32 +12,35 @@ bg_color = Color(0.88235295, 0.08627451, 0.13333334, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_msvyc"]
 bg_color = Color(0, 0.5647059, 0.16078432, 1)
 
-[node name="InimigoForte" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
+size = Vector3(1.5, 1, 1.5)
+
+[node name="InimigoForte" type="Node3D" unique_id=332215836]
 script = ExtResource("1_farlq")
 velocidade = 2.8
 vida_maxima = 250
 
-[node name="enemy-ufo-d" parent="." instance=ExtResource("1_bodl0")]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
-
-[node name="Area3D" type="Area3D" parent="enemy-ufo-d"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-d/Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
-shape = SubResource("BoxShape3D_iw5ln")
-
-[node name="BarraVida3D" type="Sprite3D" parent="."]
+[node name="BarraVida3D" type="Sprite3D" parent="." unique_id=702030673]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 billboard = 1
 texture = SubResource("ViewportTexture_farlq")
 
-[node name="SubViewport" type="SubViewport" parent="BarraVida3D"]
+[node name="SubViewport" type="SubViewport" parent="BarraVida3D" unique_id=1447337935]
 transparent_bg = true
 size = Vector2i(150, 20)
 
-[node name="ProgressBar" type="ProgressBar" parent="BarraVida3D/SubViewport"]
+[node name="ProgressBar" type="ProgressBar" parent="BarraVida3D/SubViewport" unique_id=539700978]
 offset_right = 150.0
 offset_bottom = 27.0
 theme_override_styles/background = SubResource("StyleBoxFlat_fyd03")
 theme_override_styles/fill = SubResource("StyleBoxFlat_msvyc")
 show_percentage = false
+
+[node name="enemy-ufo-a2" parent="." unique_id=1823070632 instance=ExtResource("2_ia6sf")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="enemy-ufo-a2" unique_id=240336022]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-a2/Area3D" unique_id=1985778192]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+shape = SubResource("BoxShape3D_iw5ln")

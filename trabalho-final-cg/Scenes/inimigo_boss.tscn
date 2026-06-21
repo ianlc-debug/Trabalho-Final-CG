@@ -1,10 +1,7 @@
 [gd_scene format=3 uid="uid://bshgkusiy1lf0"]
 
-[ext_resource type="PackedScene" uid="uid://dd4d7kl5fasq4" path="res://assets/enemy-ufo-d-weapon.glb" id="1_bodl0"]
 [ext_resource type="Script" uid="uid://bk6ncqrjxuel2" path="res://scripts/inimigo_basico.gd" id="1_farlq"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
-size = Vector3(2.2, 1.5, 2.2)
+[ext_resource type="PackedScene" uid="uid://iljuk5xne3pn" path="res://assets/enemy-ufo-d.glb" id="2_tnhpa"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_farlq"]
 viewport_path = NodePath("BarraVida3D/SubViewport")
@@ -15,20 +12,14 @@ bg_color = Color(0.88235295, 0.08627451, 0.13333334, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_msvyc"]
 bg_color = Color(0.9, 0.6, 0, 1)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_iw5ln"]
+size = Vector3(2.2, 1.5, 2.2)
+
 [node name="InimigoBoss" type="Node3D" unique_id=2054632773]
 script = ExtResource("1_farlq")
 velocidade = 1.6
 vida_maxima = 1000
 eh_chefe = true
-
-[node name="enemy-ufo-d-weapon" parent="." unique_id=577261957 instance=ExtResource("1_bodl0")]
-transform = Transform3D(2.2, 0, 0, 0, 2.2, 0, 0, 0, 2.2, 0, 0, 0)
-
-[node name="Area3D" type="Area3D" parent="enemy-ufo-d-weapon" unique_id=1051629988]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-d-weapon/Area3D" unique_id=1710851945]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
-shape = SubResource("BoxShape3D_iw5ln")
 
 [node name="BarraVida3D" type="Sprite3D" parent="." unique_id=793880379]
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1, 0, 1.95, 0)
@@ -45,3 +36,12 @@ offset_bottom = 27.0
 theme_override_styles/background = SubResource("StyleBoxFlat_fyd03")
 theme_override_styles/fill = SubResource("StyleBoxFlat_msvyc")
 show_percentage = false
+
+[node name="enemy-ufo-d2" parent="." unique_id=1106393158 instance=ExtResource("2_tnhpa")]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="enemy-ufo-d2" unique_id=1051629988]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="enemy-ufo-d2/Area3D" unique_id=1710851945]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("BoxShape3D_iw5ln")
