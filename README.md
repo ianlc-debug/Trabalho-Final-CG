@@ -223,15 +223,19 @@ git clone https://github.com/seu-usuario/castelo-vs-ovnis.git
 ## Estrutura do Projeto
 
 ```text
-CasteloVsOvnis/
+trabalho-final-cg/
+├── Resources/
+├── Scenes/
 ├── assets/
-│   ├── sprites/
-│   ├── audio/
-│   └── fonts/
-├── scenes/
 ├── scripts/
-├── ui/
-├── maps/
+├── .editorconfig
+├── .gitattributes
+├── cooldown_debug.log
+├── icon.svg
+├── icon.svg.import
+├── main.tscn
+├── node_3d.gd
+├── node_3d.gd.uid
 └── project.godot
 ```
 
