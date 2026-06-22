@@ -6,18 +6,18 @@ extends Node3D
 
 var vida_atual: int
 
-# --- NOVO: Pega a referência da barra de progresso na árvore ---
+# Pega a referência da barra de progresso na árvore 
 @onready var barra_vida: ProgressBar = $BarraVida3D/SubViewport/ProgressBar
 
-# --- ADICIONADO: Variáveis de Lentidão ---
+# Variáveis de Lentidão 
 var fator_lentidao: float = 1.0
 var tempo_lentidao: float = 0.0
 
-# --- ADICIONADO: Efeito de Rastro ---
+# Efeito de Rastro 
 var tempo_acumulado_rastro: float = 0.0
 @export var intervalo_rastro: float = 0.12
 
-# --- Recursos estáticos compartilhados para evitar alocações constantes e stutters de shader ---
+# Recursos estáticos compartilhados para evitar alocações constantes e stutters de shader 
 static var _mesh_bubble: SphereMesh = null
 static var _mesh_spark: SphereMesh = null
 static var _mesh_rastro: TorusMesh = null
@@ -31,7 +31,7 @@ func _ready():
 	vida_atual = vida_maxima
 	add_to_group("inimigos")
 	
-	# --- NOVO: Configura os valores iniciais da barra de vida ---
+	# Configura os valores iniciais da barra de vida
 	if barra_vida:
 		barra_vida.max_value = vida_maxima
 		barra_vida.value = vida_atual
@@ -62,12 +62,10 @@ func _process(delta):
 			var mapa = seguidor.get_parent().get_parent()
 			
 			if mapa and mapa.has_method("registrar_dano_base"):
-				# --- CORREÇÃO AQUI (usando self.get) ---
 				if self.get("eh_chefe") == true:
 					mapa.registrar_dano_base(true) # O chefe acerta o golpe fatal!
 				else:
 					mapa.registrar_dano_base()     # O inimigo normal tira 1 de vida
-				# ---------------------------------------
 					
 			seguidor.queue_free()
 
@@ -76,7 +74,7 @@ func tomar_dano(dano: int):
 	vida_atual -= dano
 	print("Inimigo tomou dano:", dano, " Vida restante:", vida_atual)
 	
-	# --- NOVO: Atualiza o visual da barra com a vida restante ---
+	# Atualiza o visual da barra com a vida restante 
 	if barra_vida:
 		barra_vida.value = vida_atual
 	
@@ -116,7 +114,7 @@ func _spawnar_explosao() -> void:
 		_material_bubble_base.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		_material_bubble_base.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	
-	# 1. Bolha de explosão (Esfera que cresce e some)
+	# Bolha de explosão 
 	var bubble = MeshInstance3D.new()
 	var mat_bubble = _material_bubble_base.duplicate()
 	mat_bubble.albedo_color = Color(1.0, 0.6, 0.1, 0.9) # Laranja fogo
@@ -128,7 +126,7 @@ func _spawnar_explosao() -> void:
 	mapa.add_child(bubble)
 	bubble.global_position = pos_explosao
 	
-	# Animar a bolha (cresce e some rápido)
+	# Animar a bolha 
 	var tween = bubble.create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(bubble, "scale", Vector3(2.5, 2.5, 2.5), 0.35)
@@ -144,9 +142,9 @@ func _spawnar_explosao() -> void:
 	if not _material_spark:
 		_material_spark = StandardMaterial3D.new()
 		_material_spark.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		_material_spark.albedo_color = Color(1.0, 0.8, 0.2) # Amarelo/Dourado
+		_material_spark.albedo_color = Color(1.0, 0.8, 0.2) 
 	
-	# 2. Partículas (Faíscas/Pedaços)
+	# Partículas 
 	var part = CPUParticles3D.new()
 	part.emitting = true
 	part.one_shot = true
@@ -176,7 +174,7 @@ func aplicar_lentidao(fator: float, tempo: float) -> void:
 	if not _material_lento:
 		_material_lento = StandardMaterial3D.new()
 		_material_lento.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		_material_lento.albedo_color = Color(0.0, 0.5, 1.0, 0.4) # Azul Gelo translúcido
+		_material_lento.albedo_color = Color(0.0, 0.5, 1.0, 0.4) 
 		
 	_aplicar_material_recursivo(self, _material_lento)
 
@@ -227,11 +225,11 @@ func _spawnar_elipse_rastro() -> void:
 	# Adiciona no mapa para que o rastro fique parado no mundo 3D
 	mapa.add_child(mesh_inst)
 	
-	# Posicionar ligeiramente abaixo do OVNI
+	# Posicionar abaixo do OVNI
 	mesh_inst.global_position = global_position - Vector3(0, 0.15, 0)
 	mesh_inst.global_rotation = global_rotation
 	
-	# Formato de elipse (alongado horizontalmente)
+	# Formato de elipse 
 	mesh_inst.scale = Vector3(1.3, 0.1, 0.7)
 	
 	# Animar expansão e fade out

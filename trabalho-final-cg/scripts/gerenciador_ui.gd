@@ -1,15 +1,15 @@
 extends CanvasLayer
 
-# --- Cenas das construções ---
+# Cenas das construções 
 @export var cena_canhao: PackedScene
 @export var cena_balista: PackedScene
 @export var cena_catapulta: PackedScene
 @export var cena_mina: PackedScene
 
-# --- Preload da Nova Torre de Gelo ---
+# Preload da Torre de Gelo 
 var cena_gelo: PackedScene = preload("res://Scenes/cena_gelo.tscn")
 
-# --- Sistema de economia e validação ---
+# Sistema de economia e validação 
 @export var ouro_inicial: int = 400
 @export var custo_canhao: int = 100
 @export var custo_balista: int = 75
@@ -34,14 +34,14 @@ var torre_fantasma: Node3D = null
 var custo_construcao_atual: int = 0
 var nome_construcao_atual: String = ""
 
-# --- Controle de local válido ---
+# Controle de local válido 
 var local_valido: bool = false
 
 var label_ouro: Label
 var label_mensagem: Label
 var label_vidas: Label
 
-# --- Interface de Onda, Melhoria e Derrota ---
+# Interface de Onda, Melhoria e Derrota 
 var construcao_selecionada: Node3D = null
 var painel_melhoria: PanelContainer = null
 var label_titulo_melhoria: Label = null
@@ -68,7 +68,7 @@ var cooldowns_restantes = {
 	"Catapulta": 0.0,
 	"Mina": 0.0
 }
-var barras_cooldown = {} # Key: Button name, Value: TextureProgressBar
+var barras_cooldown = {} 
 
 var mouse_pressed_on_button: bool = false
 var mouse_start_pos: Vector2
@@ -92,11 +92,11 @@ func _ready() -> void:
 		cam = get_node_or_null("../GridMapInverno/Camera3D2")
 	if cam:
 		camera = cam
-		# Ajustar a posição da câmera ligeiramente para mover o mapa para cima na tela
+		# Ajustar a posição da câmera
 		camera.position.z += 1.5
 		camera.position.y += 0.5
 		
-	# Ajustar cor de fundo (Clear Color) dependendo do mapa
+	# Ajustar cor de fundo dependendo do mapa
 	if is_instance_valid(mapa_3d):
 		var map_name = mapa_3d.name.to_lower()
 		var map_path = mapa_3d.scene_file_path.to_lower()
@@ -112,7 +112,7 @@ func _ready() -> void:
 	_atualizar_label_ouro()
 	_mostrar_mensagem("Escolha uma construção.")
 	
-	# Conexões de botões para click-to-place e drag-and-drop
+	# Conexões de botões para click e drag
 	botao_canhao.button_down.connect(_on_botao_down.bind(cena_canhao, custo_canhao, "Canhão"))
 	botao_balista.button_down.connect(_on_botao_down.bind(cena_balista, custo_balista, "Balista"))
 	botao_catapulta.button_down.connect(_on_botao_down.bind(cena_catapulta, custo_catapulta, "Catapulta"))
@@ -162,7 +162,7 @@ func _criar_labels() -> void:
 	_criar_ui_derrota()
 
 
-# --- ADICIONADO: Envelopa a loja num painel com fundo colorido ---
+# Envelopa a loja num painel com fundo colorido 
 func _criar_fundo_loja() -> void:
 	var hbox = hbox_loja
 	if not hbox: return
@@ -196,12 +196,12 @@ func _criar_fundo_loja() -> void:
 	painel_loja.position.y -= 10
 
 
-# --- ADICIONADO: Adiciona o botão de Gelo dinamicamente ao menu ---
+# Adiciona o botão de Gelo dinamicamente ao menu 
 func _adicionar_botao_gelo() -> void:
 	return # A torre de gelo agora é uma melhoria (upgrade), não se compra na loja.
 
 
-# --- MODIFICADO: Exibe o custo de cada torre acima de seu ícone ---
+# Exibe o custo de cada torre acima de seu ícone 
 func _adicionar_labels_custo() -> void:
 	var botoes_e_custos = [
 		{"botao": botao_canhao, "custo": custo_canhao},
@@ -239,15 +239,15 @@ func _adicionar_labels_custo() -> void:
 		btn.expand_icon = true
 		vbox.add_child(btn)
 		
-		# Criar overlay de cooldown estilo PVZ
+		# Criar overlay de cooldown 
 		var progress_overlay = TextureProgressBar.new()
 		progress_overlay.name = "CooldownOverlay"
 		progress_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		
-		# Adicionar ao botão ANTES de configurar layout de âncoras
+		# Adicionar ao botão antes de configurar layout de âncoras
 		btn.add_child(progress_overlay)
 		
-		# Forçar preenchimento do retângulo do botão via âncoras de forma robusta
+		# Forçar preenchimento do retângulo do botão via âncoras 
 		progress_overlay.anchor_left = 0.0
 		progress_overlay.anchor_top = 0.0
 		progress_overlay.anchor_right = 1.0
@@ -259,13 +259,9 @@ func _adicionar_labels_custo() -> void:
 		
 		progress_overlay.fill_mode = TextureProgressBar.FILL_CLOCKWISE
 		progress_overlay.nine_patch_stretch = true
-		
-		# --- CORREÇÃO AQUI: Removemos o custom_minimum_size e o .size manuais que brigavam com as âncoras ---
-		# Como o nine_patch_stretch está ativo e as âncoras estão em 1.0, o overlay já vai tomar 64x64 automaticamente.
-		# Caso a Godot ainda precise de um empurrão visual, usamos o set_deferred para não gerar o aviso:
 		progress_overlay.set_deferred("custom_minimum_size", Vector2(64, 64))
 		
-		# Criar textura branca 64x64 em tempo de execução
+		# Criar textura branca 
 		var img = Image.create(64, 64, false, Image.FORMAT_RGBA8)
 		img.fill(Color.WHITE)
 		var tex = ImageTexture.create_from_image(img)
@@ -387,13 +383,9 @@ func _criar_ui_melhorias() -> void:
 	painel_melhoria.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
 
 
-# --- ADICIONADO: UI de Derrota (Game Over) ---
+# UI de Derrota 
 func _criar_ui_derrota() -> void:
 	painel_derrota = PanelContainer.new()
-	
-	# MUDANÇA AQUI: Comentamos esta linha para que o menu velho não seja jogado na tela!
-	# add_child(painel_derrota)
-	
 	painel_derrota.visible = false
 	
 	var style = StyleBoxFlat.new()
@@ -540,7 +532,7 @@ func _process(delta: float) -> void:
 	
 	_atualizar_ui_onda()
 	
-	# Gerenciamento de arrasto (drag and drop)
+	# Gerenciamento de arrasto 
 	if mouse_pressed_on_button:
 		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 			var dist = get_viewport().get_mouse_position().distance_to(mouse_start_pos)
@@ -561,7 +553,7 @@ func _process(delta: float) -> void:
 	if get_tree().paused:
 		return
 		
-	# Atualizar cooldowns individuais e overlays estilo PVZ
+	# Atualizar cooldowns individuais e overlays 
 	for nome in cooldowns_restantes.keys():
 		var rest = cooldowns_restantes[nome]
 		if rest > 0.0:
@@ -602,7 +594,7 @@ func _process(delta: float) -> void:
 	_atualizar_guias_caminho(delta)
 
 
-# --- ADICIONADO: Atualização e movimentação das partículas guias ---
+# Atualização e movimentação das partículas guias 
 func _atualizar_guias_caminho(delta: float) -> void:
 	if not is_instance_valid(mapa_3d): return
 	
@@ -655,12 +647,10 @@ func _spawnar_guia_caminho() -> void:
 		
 		var mat = StandardMaterial3D.new()
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		mat.albedo_color = Color(0.1, 0.8, 1.0, 0.7) # Ciano brilhante
+		mat.albedo_color = Color(0.1, 0.8, 1.0, 0.7) 
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		sm.material = mat
 		mesh_inst.mesh = sm
-		
-		# Eleva um pouco acima do chão
 		mesh_inst.position = Vector3(0, 0.4, 0)
 		
 		seguidor.add_child(mesh_inst)
@@ -668,7 +658,7 @@ func _spawnar_guia_caminho() -> void:
 		lista_guias.append(seguidor)
 
 
-# --- ADICIONADO: Helper para criar explosões de partículas CPUParticles3D ---
+#  Helper para criar explosões de partículas CPUParticles3D 
 func _spawnar_particulas_construcao(pos: Vector3, cor: Color) -> void:
 	var part = CPUParticles3D.new()
 	part.emitting = true
@@ -1065,13 +1055,13 @@ func _atualizar_ui_onda() -> void:
 	var vencido = mapa_3d.get("jogo_vencido")
 	
 	if vencido:
-		# 1. Esconde a caixa preta velha lá do topo
+		# Esconde a caixa preta velha do topo
 		painel_onda.visible = false 
 		botao_onda_skip.visible = false
 		if botao_pausa:
 			botao_pausa.visible = false
 		
-		# 2. Procura a função do menu verde que criamos no mapa e a executa
+		# Procura a função do menu verde e a executa
 		if get_tree().current_scene.has_method("_exibir_tela_vitoria"):
 			get_tree().current_scene._exibir_tela_vitoria()
 		elif owner and owner.has_method("_exibir_tela_vitoria"):
@@ -1123,11 +1113,11 @@ func _is_ice_phase() -> bool:
 	var map_name = mapa_3d.name.to_lower()
 	var map_path = mapa_3d.scene_file_path.to_lower()
 	
-	# Se for mapa de inverno (Inverno ou Gelo no nome/path)
+	# Se for mapa de inverno 
 	if "inverno" in map_name or "inverno" in map_path or "gelo" in map_name or "gelo" in map_path:
 		return true
 		
-	# Se for outro mapa (ex: primavera), só desbloqueia se a fase de inverno já tiver sido concluída
+	# Se for outro mapa só desbloqueia se a fase de inverno já tiver sido concluída
 	if Salvamento.is_inverno_concluido():
 		var onda_at = mapa_3d.get("onda_atual")
 		if onda_at != null and onda_at >= 2:
@@ -1150,23 +1140,16 @@ func _on_botao_upgrade_gelo_pressed() -> void:
 	
 # Criação da nova torre de gelo
 	var nova_torre = cena_gelo.instantiate()
-	
-	# 1. PRIMEIRO: Coloque a torre no mundo do jogo!
 	mapa_3d.add_child(nova_torre)
-	
-	# 2. DEPOIS: Agora que ela existe no mundo, podemos dar a posição global
 	nova_torre.global_position = pos_torre
 	nova_torre.global_rotation = rot_torre
 	
 	if nova_torre.has_method("ativar_torre"):
 		nova_torre.ativar_torre()
 		
-	# Remove a antiga
 	var construcao_a_deletar = construcao_selecionada
 	_deselecionar_construcao()
 	construcao_a_deletar.queue_free()
 	
 	_mostrar_mensagem("Torre evoluída para Torre de Gelo!")
-	
-	# VFX de faíscas congeladas/ciano no upgrade
 	_spawnar_particulas_construcao(pos_torre, Color(0.2, 0.8, 1.0))

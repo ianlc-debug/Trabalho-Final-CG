@@ -1,6 +1,6 @@
 extends Node3D
 
-# --- NOVO: Vaga para colocar a munição da torre ---
+# Vaga para colocar a munição da torre
 @export var cena_projetil: PackedScene
 
 @export var dano: int = 25
@@ -79,7 +79,7 @@ func _mirar_no_alvo() -> void:
 			look_at(posicao_alvo, Vector3.UP)
 
 
-# --- MODIFICADO: Agora cria o tiro em vez de dar dano instantâneo ---
+# Agora cria o tiro em vez de dar dano instantâneo 
 func _atacar(inimigo: Node3D) -> void:
 	pode_atacar = false
 	

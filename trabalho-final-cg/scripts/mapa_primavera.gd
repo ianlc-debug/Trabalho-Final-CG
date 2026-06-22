@@ -302,24 +302,21 @@ func _corrigir_barra_botoes_dinamicamente() -> void:
 				filho.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 				filho.reset_size()
 				
-				# 3. MATEMÁTICA DO CENTRO PERFEITO:
 				# Pega o tamanho atual da janela do jogo
 				var tamanho_tela = get_viewport().get_visible_rect().size
 				
-				# Posição X = (Metade da Tela) - (Metade da Largura da Barra) -> Centraliza perfeitamente
+				# Posição X 
 				var centro_x = (tamanho_tela.x / 2.0) - (filho.size.x / 2.0)
 				
-				# Posição Y = Altura da Tela - Altura da Barra - 20 pixels de folga do chão
+				# Posição Y
 				var chao_y = tamanho_tela.y - filho.size.y - 20.0
 				
 				# Aplica a posição calculada diretamente no objeto
 				filho.global_position = Vector2(centro_x, chao_y)
 				
-				print("Sucesso! A barra foi encolhida ao tamanho dos botões e perfeitamente centralizada.")
-				
 # Variável para controlar a existência do menu de pausa na tela
 var _menu_pausa_instancia: PanelContainer = null
-var _botao_pausa_ref: Button = null # <--- NOVA VARIÁVEL: Guarda o botão para atualizar o texto
+var _botao_pausa_ref: Button = null 
 
 func _reorganizar_hud_superior_e_pausa() -> void:
 	var ui_alvo = null
@@ -645,15 +642,12 @@ func _exibir_tela_game_over() -> void:
 var _camada_vitoria_instancia: CanvasLayer = null
 
 func _exibir_tela_vitoria() -> void:
-	# --- 1. A TRAVA DE SEGURANÇA (Isso resolve o bug dos múltiplos cliques!) ---
-	# Se a camada já existe e está na tela, não faça absolutamente nada.
 	if is_instance_valid(_camada_vitoria_instancia):
 		return 
 
 	# Pausa o jogo instantaneamente
 	get_tree().paused = true
 
-	# 2. ESCONDER A INTERFACE ANTIGA TEIMOSA
 	var ui_alvo = null
 	if has_node("UI"): ui_alvo = get_node("UI")
 	elif has_node("GerenciadorUI"): ui_alvo = get_node("GerenciadorUI")
@@ -674,9 +668,6 @@ func _exibir_tela_vitoria() -> void:
 							pai = pai.get_parent()
 			nos.append_array(atual.get_children())
 
-	# ----------------------------------------------------
-	# 3. CRIAÇÃO DO SISTEMA DE CAMADA (CANVASLAYER)
-	# ----------------------------------------------------
 	_camada_vitoria_instancia = CanvasLayer.new()
 	_camada_vitoria_instancia.layer = 120 
 	_camada_vitoria_instancia.process_mode = Node.PROCESS_MODE_ALWAYS 
@@ -691,8 +682,6 @@ func _exibir_tela_vitoria() -> void:
 	fundo_escuro.mouse_filter = Control.MOUSE_FILTER_STOP 
 	_camada_vitoria_instancia.add_child(fundo_escuro)
 
-	# --- O SEGREDO DO POSICIONAMENTO PERFEITO ---
-	# O CenterContainer força o que estiver dentro dele a ficar no meio absoluto
 	var centro = CenterContainer.new()
 	centro.anchor_right = 1.0
 	centro.anchor_bottom = 1.0
@@ -743,9 +732,6 @@ func _exibir_tela_vitoria() -> void:
 	var separador = HSeparator.new()
 	vbox.add_child(separador)
 	
-	# ----------------------------------------------------
-	# BOTÃO 1: JOGAR NOVAMENTE
-	# ----------------------------------------------------
 	var btn_jogar_novamente = Button.new()
 	btn_jogar_novamente.text = "Jogar Novamente"
 	btn_jogar_novamente.custom_minimum_size = Vector2(240, 45)
@@ -759,9 +745,6 @@ func _exibir_tela_vitoria() -> void:
 	)
 	vbox.add_child(btn_jogar_novamente)
 	
-	# ----------------------------------------------------
-	# BOTÃO 2: MENU PRINCIPAL
-	# ----------------------------------------------------
 	var btn_menu_principal = Button.new()
 	btn_menu_principal.text = "Menu Principal"
 	btn_menu_principal.custom_minimum_size = Vector2(240, 45)

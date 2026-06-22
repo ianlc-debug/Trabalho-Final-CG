@@ -76,10 +76,10 @@ func _ready() -> void:
 	timer.timeout.connect(_on_spawn_timer_timeout)
 	tempo_espera_restante = tempo_espera_total
 	
-	# Correção da barra inferior (que já deu certo)
+	# Correção da barra inferior 
 	call_deferred("_corrigir_barra_botoes_dinamicamente")
 	
-	# --- LINHA ADICIONADA: Organiza o HUD superior e configura o sistema de pausa ---
+	# Organiza o HUD superior e configura o sistema de pausa 
 	call_deferred("_reorganizar_hud_superior_e_pausa")
 
 
@@ -126,7 +126,7 @@ func iniciar_proxima_onda() -> void:
 		for i in range(quant):
 			fila_spawn.append(cena)
 			
-	# Misturar um pouco os inimigos (exceto boss que deve vir no final)
+	# Misturar um pouco os inimigos 
 	_misturar_fila_spawn()
 	
 	# Configurar timer de spawn
@@ -155,7 +155,7 @@ func _on_spawn_timer_timeout() -> void:
 		timer.stop()
 		em_spawn = false
 		
-		# --- NOVO: Força a checagem final assim que o spawn termina ---
+		# Força a checagem final assim que o spawn termina 
 		_atualizar_inimigos_vivos() 
 		return
 		
@@ -190,21 +190,20 @@ func _on_inimigo_saiu_da_arvore() -> void:
 
 
 func _atualizar_inimigos_vivos() -> void:
-	# 1. Proteção contra o crash ao reiniciar
+	# Proteção contra o crash ao reiniciar
 	if not is_inside_tree():
 		return
 		
-	# 2. Contagem real dos inimigos ativos no jogo
+	# Contagem real dos inimigos ativos no jogo
 	var inimigos = get_tree().get_nodes_in_group("inimigos")
 	inimigos_vivos = inimigos.size()
 	
-	# 3. Lógica de avanço de ondas
+	# Lógica de avanço de ondas
 	if fila_spawn.is_empty() and inimigos_vivos == 0 and not em_espera and not jogo_vencido:
-		# --- LINHA DE OURO ADICIONADA: Dá ouro ao jogador pelo fim da onda ---
-		# Procura o nó da UI e chama o método "adicionar_ouro" que está no seu gerenciador_ui.gd
-		var gerenciador_ui = get_node_or_null("UI") # Ajuste o caminho se a UI não estiver direto na raiz do mapa
+		# Dá ouro ao jogador pelo fim da onda 
+		var gerenciador_ui = get_node_or_null("UI") 
 		if gerenciador_ui and gerenciador_ui.has_method("adicionar_ouro"):
-			gerenciador_ui.adicionar_ouro(400) # <- Mude 100 para o valor de bônus que você preferir!
+			gerenciador_ui.adicionar_ouro(400) 
 
 		# Verifica se ainda existem mais ondas configuradas
 		if onda_atual + 1 < configuracao_ondas.size():
@@ -246,7 +245,7 @@ func registrar_dano_base(eh_chefe: bool = false) -> void:
 		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
 			ui_gerenciador._mostrar_mensagem("O CHEFE DESTRUIU O CASTELO!")
 	else:
-		# Se não for o chefe, tira só 1 de vida (funcionamento normal)
+		# Se não for o chefe, tira só 1 de vida 
 		base_health -= 1
 		if ui_gerenciador and ui_gerenciador.has_method("_mostrar_mensagem"):
 			ui_gerenciador._mostrar_mensagem("Base invadida! Vidas restantes: " + str(base_health))
@@ -284,7 +283,7 @@ func _corrigir_barra_botoes_dinamicamente() -> void:
 			# Identifica o painel de compras
 			if "painel" in nome or "barra" in nome or "botoes" in nome or "container" in nome or filho is PanelContainer or filho is Panel:
 				
-				# 1. Encontra o container horizontal interno (onde os botões realmente estão)
+				# Encontra o container horizontal interno (onde os botões realmente estão)
 				var container_interno: Control = null
 				for sub_filho in filho.get_children():
 					if sub_filho is HBoxContainer or sub_filho is GridContainer:
@@ -295,7 +294,7 @@ func _corrigir_barra_botoes_dinamicamente() -> void:
 					# Força o container de botões a se espremer ao mínimo possível
 					container_interno.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 					
-					# 2. Faz o painel de fundo copiar o tamanho exato mínimo dos botões (mais uma bordinha de respiro)
+					# Faz o painel de fundo copiar o tamanho exato mínimo dos botões (mais uma bordinha de respiro)
 					var tamanho_botoes = container_interno.get_combined_minimum_size()
 					filho.custom_minimum_size = Vector2(tamanho_botoes.x + 30, tamanho_botoes.y + 20)
 				
@@ -303,24 +302,21 @@ func _corrigir_barra_botoes_dinamicamente() -> void:
 				filho.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 				filho.reset_size()
 				
-				# 3. MATEMÁTICA DO CENTRO PERFEITO:
 				# Pega o tamanho atual da janela do jogo
 				var tamanho_tela = get_viewport().get_visible_rect().size
 				
-				# Posição X = (Metade da Tela) - (Metade da Largura da Barra) -> Centraliza perfeitamente
+				# Posição X 
 				var centro_x = (tamanho_tela.x / 2.0) - (filho.size.x / 2.0)
 				
-				# Posição Y = Altura da Tela - Altura da Barra - 20 pixels de folga do chão
+				# Posição Y 
 				var chao_y = tamanho_tela.y - filho.size.y - 20.0
 				
 				# Aplica a posição calculada diretamente no objeto
 				filho.global_position = Vector2(centro_x, chao_y)
 				
-				print("Sucesso! A barra foi encolhida ao tamanho dos botões e perfeitamente centralizada.")
-				
 # Variável para controlar a existência do menu de pausa na tela
 var _menu_pausa_instancia: PanelContainer = null
-var _botao_pausa_ref: Button = null # <--- NOVA VARIÁVEL: Guarda o botão para atualizar o texto
+var _botao_pausa_ref: Button = null 
 
 func _reorganizar_hud_superior_e_pausa() -> void:
 	var ui_alvo = null
@@ -361,7 +357,6 @@ func _reorganizar_hud_superior_e_pausa() -> void:
 	if not botao_pausa:
 		return
 
-	# SALVA O BOTÃO NA NOSSA VARIÁVEL GLOBAL
 	_botao_pausa_ref = botao_pausa
 
 	var pai = botao_pausa.get_parent()
@@ -446,7 +441,7 @@ func _reorganizar_hud_superior_e_pausa() -> void:
 		botao_pausa.pressed.disconnect(conexao.callable)
 	botao_pausa.pressed.connect(_on_botao_pausa_clicado)
 
-# --- SISTEMA DO MENU DE PAUSA CENTRALIZADO ---
+# SISTEMA DO MENU DE PAUSA
 
 func _on_botao_pausa_clicado() -> void:
 	if is_instance_valid(_menu_pausa_instancia):
@@ -457,15 +452,15 @@ func _on_botao_pausa_clicado() -> void:
 func _alternar_pausa(pausar: bool) -> void:
 	get_tree().paused = pausar
 	
-	# Sincroniza o texto E as cores do botão superior
+	# Sincroniza o texto e as cores do botão superior
 	if is_instance_valid(_botao_pausa_ref):
 		if pausar:
 			_botao_pausa_ref.text = "Continuar"
-			# Aplica a cor avermelhada no texto (ajuste o RGB se quiser outro tom)
+			# Aplica a cor avermelhada no texto 
 			_botao_pausa_ref.add_theme_color_override("font_color", Color(1.0, 0.4, 0.4)) 
 		else:
 			_botao_pausa_ref.text = "Pausar"
-			# Remove a alteração de cor para voltar ao branco padrão do tema
+			# Remove a alteração de cor para voltar ao branco padrão 
 			_botao_pausa_ref.remove_theme_color_override("font_color")
 			
 	if pausar:
@@ -545,7 +540,7 @@ func _on_voltar_menu_pressionado() -> void:
 	_alternar_pausa(false)
 	get_tree().change_scene_to_file("res://Scenes/menu_principal.tscn")
 
-# Variável para guardar o nosso novo painel de derrota
+# Variável para guardar o novo painel de derrota
 var _menu_game_over_instancia: PanelContainer = null
 
 func _exibir_tela_game_over() -> void:
@@ -562,8 +557,6 @@ func _exibir_tela_game_over() -> void:
 	else:
 		ui_alvo = self
 		
-	# 1. VARREDURA PARA ESCONDER O MENU VELHO
-	# Isso garante que a janelinha feia lá de baixo desapareça da tela
 	if is_instance_valid(ui_alvo):
 		var nos = [ui_alvo]
 		while nos.size() > 0:
@@ -571,7 +564,6 @@ func _exibir_tela_game_over() -> void:
 			if atual is Control and atual.visible:
 				for filho in atual.get_children():
 					if filho is Label and ("fim de jogo" in filho.text.to_lower() or "destruída" in filho.text.to_lower()):
-						# Encontramos o texto do menu velho, vamos esconder o painel inteiro
 						var pai = filho.get_parent()
 						while pai and pai != ui_alvo:
 							if pai is PanelContainer or pai is Panel or pai is ColorRect:
@@ -580,12 +572,11 @@ func _exibir_tela_game_over() -> void:
 							pai = pai.get_parent()
 			nos.append_array(atual.get_children())
 
-	# 2. CRIAÇÃO DO NOVO MENU DE GAME OVER CENTRALIZADO
 	_menu_game_over_instancia = PanelContainer.new()
 	_menu_game_over_instancia.process_mode = Node.PROCESS_MODE_ALWAYS
 	_menu_game_over_instancia.name = "MenuGameOverCentralizado"
 	
-	# Estilo visual de derrota (Fundo escuro com bordas vermelhas)
+	# Estilo visual de derrota 
 	var estilo_painel = StyleBoxFlat.new()
 	estilo_painel.bg_color = Color(0.15, 0.05, 0.05, 0.95)
 	estilo_painel.set_corner_radius_all(12)
@@ -618,14 +609,14 @@ func _exibir_tela_game_over() -> void:
 	var separador = HSeparator.new()
 	vbox.add_child(separador)
 	
-	# Botão 1: Jogar Novamente (Reaproveita a função do Pause!)
+	# Jogar Novamente 
 	var btn_jogar_novamente = Button.new()
 	btn_jogar_novamente.text = "Jogar Novamente"
 	btn_jogar_novamente.custom_minimum_size = Vector2(220, 42)
 	btn_jogar_novamente.pressed.connect(_on_reiniciar_fase_pressionado)
 	vbox.add_child(btn_jogar_novamente)
 	
-	# Botão 2: Menu Principal (Reaproveita a função do Pause!)
+	# Menu Principal 
 	var btn_menu_principal = Button.new()
 	btn_menu_principal.text = "Menu Principal"
 	btn_menu_principal.custom_minimum_size = Vector2(220, 42)
@@ -646,15 +637,12 @@ func _exibir_tela_game_over() -> void:
 var _camada_vitoria_instancia: CanvasLayer = null
 
 func _exibir_tela_vitoria() -> void:
-	# --- 1. A TRAVA DE SEGURANÇA (Isso resolve o bug dos múltiplos cliques!) ---
-	# Se a camada já existe e está na tela, não faça absolutamente nada.
 	if is_instance_valid(_camada_vitoria_instancia):
 		return 
 
 	# Pausa o jogo instantaneamente
 	get_tree().paused = true
 
-	# 2. ESCONDER A INTERFACE ANTIGA TEIMOSA
 	var ui_alvo = null
 	if has_node("UI"): ui_alvo = get_node("UI")
 	elif has_node("GerenciadorUI"): ui_alvo = get_node("GerenciadorUI")
@@ -675,9 +663,6 @@ func _exibir_tela_vitoria() -> void:
 							pai = pai.get_parent()
 			nos.append_array(atual.get_children())
 
-	# ----------------------------------------------------
-	# 3. CRIAÇÃO DO SISTEMA DE CAMADA (CANVASLAYER)
-	# ----------------------------------------------------
 	_camada_vitoria_instancia = CanvasLayer.new()
 	_camada_vitoria_instancia.layer = 120 
 	_camada_vitoria_instancia.process_mode = Node.PROCESS_MODE_ALWAYS 
@@ -692,20 +677,16 @@ func _exibir_tela_vitoria() -> void:
 	fundo_escuro.mouse_filter = Control.MOUSE_FILTER_STOP 
 	_camada_vitoria_instancia.add_child(fundo_escuro)
 
-	# --- O SEGREDO DO POSICIONAMENTO PERFEITO ---
-	# O CenterContainer força o que estiver dentro dele a ficar no meio absoluto
 	var centro = CenterContainer.new()
 	centro.anchor_right = 1.0
 	centro.anchor_bottom = 1.0
 	centro.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fundo_escuro.add_child(centro)
 
-	# 4. CRIAÇÃO DO PAINEL VERDE CENTRALIZADO
 	var panel_vitoria = PanelContainer.new()
 	panel_vitoria.mouse_filter = Control.MOUSE_FILTER_STOP 
-	centro.add_child(panel_vitoria) # Adicionamos no centro, e não no fundo!
+	centro.add_child(panel_vitoria) 
 	
-	# Estilo visual de vitória 
 	var estilo_painel = StyleBoxFlat.new()
 	estilo_painel.bg_color = Color(0.05, 0.15, 0.05, 0.98)
 	estilo_painel.set_corner_radius_all(12)
@@ -744,9 +725,6 @@ func _exibir_tela_vitoria() -> void:
 	var separador = HSeparator.new()
 	vbox.add_child(separador)
 	
-	# ----------------------------------------------------
-	# BOTÃO 1: JOGAR NOVAMENTE
-	# ----------------------------------------------------
 	var btn_jogar_novamente = Button.new()
 	btn_jogar_novamente.text = "Jogar Novamente"
 	btn_jogar_novamente.custom_minimum_size = Vector2(240, 45)
@@ -760,9 +738,6 @@ func _exibir_tela_vitoria() -> void:
 	)
 	vbox.add_child(btn_jogar_novamente)
 	
-	# ----------------------------------------------------
-	# BOTÃO 2: MENU PRINCIPAL
-	# ----------------------------------------------------
 	var btn_menu_principal = Button.new()
 	btn_menu_principal.text = "Menu Principal"
 	btn_menu_principal.custom_minimum_size = Vector2(240, 45)
