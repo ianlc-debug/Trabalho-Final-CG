@@ -237,7 +237,7 @@ CasteloVsOvnis/
 
 ---
 
-## Desenvolvedores
+## Equipe
 
 * Antônio Matheus da Costa Queiroz
 * Augusto Rodrigues Paz Gregório
