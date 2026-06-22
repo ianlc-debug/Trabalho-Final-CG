@@ -246,9 +246,3 @@ CasteloVsOvnis/
 * Ian Lopes Costa
 * José Arthur Gomes Azevedo
 * Marcelo Henrique Teixeira de Souza Alves
-
----
-
-## Licença
-
-Este projeto foi desenvolvido para fins acadêmicos e educacionais.
