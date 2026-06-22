@@ -50,33 +50,33 @@ O jogador possui quatro tipos de construções disponíveis para defender o cast
 
 ### 🔫 Canhão
 
-Estrutura ofensiva com alto dano e alcance médio.
+Estrutura ofensiva com dano médio e alcance médio.
 
 **Características:**
 
-* Alto dano;
+* Dano médio;
 * Alcance médio;
-* Eficiente contra inimigos resistentes.
+* Taxa de disparo mediana.
 
 ### 🏹 Balista
 
-Estrutura de longo alcance que permite atacar inimigos antes que eles se aproximem da base.
+Estrutura de longo alcance que permite atacar inimigos rapidamente antes que eles se aproximem da base.
 
 **Características:**
 
+* Dabo baixo;
 * Longo alcance;
-* Boa precisão;
-* Excelente para eliminar inimigos à distância.
+* Taxa de disparo alta.
 
 ### 💣 Catapulta
 
-Estrutura capaz de causar dano em área, sendo especialmente útil contra grupos de inimigos.
+Estrutura capaz de causar alto dano a longo alcance.
 
 **Características:**
 
-* Dano em área;
-* Boa cobertura de terreno;
-* Eficiente contra grandes quantidades de inimigos.
+* Dano alto;
+* Longo alcance;
+* Taxa de disparo baixa.
 
 ### ⛏️ Mina de Ouro
 
