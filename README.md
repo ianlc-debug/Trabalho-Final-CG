@@ -239,9 +239,13 @@ CasteloVsOvnis/
 
 ## Desenvolvedores
 
-* Nome do Integrante 1
-* Nome do Integrante 2
-* Nome do Integrante 3
+* Antônio Matheus da Costa Queiroz
+* Augusto Rodrigues Paz Gregório
+* Davi Gomes Rocha
+* Davi Moura Guedes
+* Ian Lopes Costa
+* José Arthur Gomes Azevedo
+* Marcelo Henrique Teixeira de Souza Alves
 
 ---
 
