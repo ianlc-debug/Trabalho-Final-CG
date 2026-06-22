@@ -28,11 +28,11 @@ O jogador perde caso:
 
 O jogo possui dois mapas jogáveis:
 
-### 🌸 Primavera
+### Primavera
 
 Primeira fase do jogo, onde o jogador enfrenta as primeiras ondas de OVNIs e aprende as mecânicas básicas de construção, evolução e gerenciamento de recursos.
 
-### ❄️ Inverno
+### Inverno
 
 Segunda fase do jogo, apresentando um desafio maior e exigindo estratégias mais eficientes para lidar com os inimigos.
 
@@ -48,7 +48,7 @@ Cada fase possui:
 
 O jogador possui quatro tipos de construções disponíveis para defender o castelo.
 
-### 🔫 Canhão
+### Canhão
 
 Estrutura ofensiva com dano médio e alcance médio.
 
@@ -58,7 +58,7 @@ Estrutura ofensiva com dano médio e alcance médio.
 * Alcance médio;
 * Taxa de disparo mediana.
 
-### 🏹 Balista
+### Balista
 
 Estrutura de longo alcance que permite atacar inimigos rapidamente antes que eles se aproximem da base.
 
@@ -68,7 +68,7 @@ Estrutura de longo alcance que permite atacar inimigos rapidamente antes que ele
 * Longo alcance;
 * Taxa de disparo alta.
 
-### 💣 Catapulta
+### Catapulta
 
 Estrutura capaz de causar alto dano a longo alcance.
 
@@ -78,7 +78,7 @@ Estrutura capaz de causar alto dano a longo alcance.
 * Longo alcance;
 * Taxa de disparo baixa.
 
-### ⛏️ Mina de Ouro
+### Mina de Ouro
 
 Construção responsável pela geração de ouro ao longo da partida.
 
@@ -134,19 +134,19 @@ Essa funcionalidade permite reorganizar a estratégia ao longo da partida e adap
 
 Durante as fases, o jogador enfrentará quatro tipos diferentes de OVNIs.
 
-### 👽 OVNI Normal
+### OVNI Normal
 
 Inimigo padrão com atributos equilibrados.
 
-### ⚡ OVNI Rápido
+### OVNI Rápido
 
 Possui alta velocidade de movimentação, tornando-se uma ameaça difícil de interceptar.
 
-### 🛡️ OVNI Tank
+### OVNI Tank
 
 Inimigo com grande quantidade de vida e alta resistência.
 
-### 👑 OVNI Chefe (Boss)
+### OVNI Chefe (Boss)
 
 O inimigo mais poderoso do jogo.
 
