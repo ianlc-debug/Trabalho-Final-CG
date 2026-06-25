@@ -192,7 +192,7 @@ Não é necessário utilizar o teclado durante a jogabilidade.
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/castelo-vs-ovnis.git
+git clone https://github.com/ianlc-debug/Trabalho-Final-CG.git
 ```
 
 2. Abra a Godot Engine.
