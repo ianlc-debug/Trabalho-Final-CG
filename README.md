@@ -238,6 +238,23 @@ trabalho-final-cg/
 ├── node_3d.gd.uid
 └── project.godot
 ```
+---
+## Imagens do Jogo
+## Tela Inicial
+<img width="1487" height="988" alt="Captura de tela 2026-06-26 170413" src="https://github.com/user-attachments/assets/1cd4dafd-7557-47d1-842a-bec8ae9c64ff" />
+
+## Tela de Créditos
+<img width="1487" height="988" alt="Captura de tela 2026-06-26 170622" src="https://github.com/user-attachments/assets/72e08301-9da6-44d4-b62c-57d9506fd043" />
+
+## Tela de Seleção de Fase
+<img width="1487" height="988" alt="Captura de tela 2026-06-26 170655" src="https://github.com/user-attachments/assets/f98baa3f-2743-4426-9c39-1a862f974d4c" />
+
+## Mapa Primavera
+<img width="1918" height="990" alt="Captura de tela 2026-06-26 170023" src="https://github.com/user-attachments/assets/7fcfecb9-0269-47be-a40c-922b09dcbb51" />
+
+## Mapa Inverno
+<img width="1918" height="985" alt="Captura de tela 2026-06-26 170133" src="https://github.com/user-attachments/assets/99a6c251-9aed-40ca-a713-489dceaf374a" />
+
 
 ---
 
